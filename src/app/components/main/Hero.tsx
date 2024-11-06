@@ -5,7 +5,7 @@ type Props = {};
 
 const Hero = (props: Props) => {
   return (
-    <div className="flex flex-row max-md:flex-col max-md:items-center justify-between max-w-[1500px] w-full mx-auto px-8 ">
+    <div className="flex flex-row max-md:flex-col max-md:items-center justify-between max-w-[1500px] w-full mt-24 mx-auto px-8 ">
       <div className="flex-1 pr-12">
         <h1 className="text-6xl font-bold tracking-tight text-gray-900 mb-6">
           Welcome to JIR
