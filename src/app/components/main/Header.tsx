@@ -194,7 +194,7 @@ export default function App() {
             as={Link}
             color="primary"
             className="text-lg"
-            href="#"
+            href="/login"
             variant="flat"
           >
             Sign Up
