@@ -5,6 +5,7 @@ import {
   useState,
   ReactNode,
   useEffect,
+  Suspense,
 } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
@@ -33,6 +34,25 @@ export const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+
+  return (
+    <Suspense fallback={null}>
+      <WorkspaceContent pathname={pathname} router={router}>
+        {children}
+      </WorkspaceContent>
+    </Suspense>
+  );
+}
+
+function WorkspaceContent({
+  children,
+  pathname,
+  router,
+}: {
+  children: ReactNode;
+  pathname: string;
+  router: ReturnType<typeof useRouter>;
+}) {
   const searchParams = useSearchParams();
 
   // Initialize with a loading state
