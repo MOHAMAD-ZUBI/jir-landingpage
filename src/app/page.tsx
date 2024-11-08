@@ -7,7 +7,7 @@ import Pricing from "./components/main/Pricing";
 import Featrues from "./components/main/Featrues";
 import Test from "./components/reusable/Services";
 import ServicesGrid from "./components/reusable/ServicesGrid";
-
+import GetStarted from "./components/main/GetStarted";
 export default function Home() {
   return (
     <main className="relative ">
@@ -18,6 +18,7 @@ export default function Home() {
         {/* <ServicesGrid /> */}
         {/* <Test /> */}
         <Pricing />
+        <GetStarted />
       </div>
     </main>
   );
