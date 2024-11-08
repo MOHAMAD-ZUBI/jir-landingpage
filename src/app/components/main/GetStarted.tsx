@@ -19,7 +19,7 @@ const GetStarted = () => {
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
             Getting started is easy
           </h2>
-          <p className="text-white max-md:text-gray-800 max-md:font-semibold text-xl mb-10">
+          <p className="text-white max-md:font-semibold text-xl mb-10">
             Sign up today and deliver your apps in record time
           </p>
           <Link
@@ -44,14 +44,14 @@ const GetStarted = () => {
         </div>
 
         {/* Rocket and Cloud Illustration */}
-        <div className="absolute right-0 bottom-0 w-96 h-96 md:w-[500px] md:h-[500px]">
+        <div className="absolute right-0 bottom-0 w-96 h-96 md:w-[500px] md:h-[500px] max-md:hidden">
           {/* Cloud */}
           <div className="absolute bottom-0 right-0 w-full h-1/2 bg-white rounded-full opacity-90"></div>
 
           {/* Rocket */}
           <div className="absolute bottom-32 right-32 transform rotate-45">
             <div className="w-24 h-48 bg-blue-500 rounded-t-full relative">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white rounded-full"></div>
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white max-md:bg-blue-600 rounded-full"></div>
               <div className="absolute bottom-0 left-0 w-8 h-16 bg-blue-600 rounded-bl-full"></div>
               <div className="absolute bottom-0 right-0 w-8 h-16 bg-blue-600 rounded-br-full"></div>
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-10 bg-orange-500 clip-path-triangle"></div>
