@@ -185,7 +185,7 @@ export default function App() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link className="text-lg" href="#">
+          <Link className="text-lg" href="/auth/signin">
             Login
           </Link>
         </NavbarItem>
@@ -194,7 +194,7 @@ export default function App() {
             as={Link}
             color="primary"
             className="text-lg"
-            href="/login"
+            href="/auth/signup"
             variant="flat"
           >
             Sign Up
