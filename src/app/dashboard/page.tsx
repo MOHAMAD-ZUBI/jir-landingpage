@@ -62,15 +62,16 @@
 // export default DashboardPage;
 
 import React from "react";
-import AddRule from "./components/AddRule";
+import AddRule from "./components/Oracle/AddRule";
 import { useAuth } from "@/context/AuthContext";
+import AddNestedJob from "./components/Oracle/AddNestedJob";
 
 type Props = {};
 
 const page = (props: Props) => {
   const { user } = useAuth();
   console.log({ user });
-  return <AddRule onSuccess={() => {}} />;
+  return <AddNestedJob />;
 };
 
 export default page;
