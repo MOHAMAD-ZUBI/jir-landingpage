@@ -35,7 +35,7 @@ const Sidebar: FC<SidebarProps> = ({ handleSidebar }) => {
       <div>
         <div className="flex flex-row w-full justify-between items-center">
           <div className="p-3 flex flex-row items-center gap-2 text-primaryDashboard">
-            {/* <Image
+            {/* logo <Image
               src="/betrendlogo.png"
               width={150}
               height={150}
