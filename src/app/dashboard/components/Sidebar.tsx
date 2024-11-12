@@ -68,6 +68,7 @@ const Sidebar: FC<SidebarProps> = ({ handleSidebar }) => {
         <button
           onClick={() => {
             logOut();
+            window.location.reload();
           }}
           className={
             "text-black group w-full mt-4 font-[450] text-[18px] flex flex-row items-center justify-between px-4 py-3 rounded-2xl duration-300 hover:bg-red-50/50 hover:text-red-400 "
