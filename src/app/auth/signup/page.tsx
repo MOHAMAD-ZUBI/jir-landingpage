@@ -1,18 +1,30 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Input, Select, SelectItem } from "@nextui-org/react";
+import { signUp } from "@/utils/authFunctions"; // Import Firebase auth function
+import { useRouter } from "next/navigation"; // For redirecting after signup
+import {
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/firebase";
 
 export default function SignUpPage() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    phoneNumber: "",
+    countryCode: "+1",
+    rememberMe: false,
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "", // Added password field
+  });
+  const [error, setError] = useState(""); // Added error state
 
-  console.log(phoneNumber);
+  console.log(formData.phoneNumber);
   const countryCodes = [
     { label: "US (+1)", value: "+1" },
     { label: "UK (+44)", value: "+44" },
@@ -23,15 +35,39 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Email verification logic here
+    try {
+      const userCredential = await signUp(formData.email, formData.password);
+      // You might want to store additional user data (firstName, lastName, etc.)
+      // in Firebase Realtime Database or Firestore here
+
+      router.push("/dashboard"); // Redirect to dashboard after successful signup
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
-  const handleGithubSignIn = () => {
-    signIn("github", { callbackUrl: "/" });
+  const handleGithubSignIn = async () => {
+    try {
+      const provider = new GithubAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      router.push("/dashboard");
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/" });
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      router.push("/dashboard");
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const handleOracleSignIn = () => {
+    // Remove or replace with another provider
   };
 
   return (
@@ -51,16 +87,20 @@ export default function SignUpPage() {
             <div className="flex gap-2">
               <input
                 type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={formData.firstName}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstName: e.target.value })
+                }
                 placeholder="First name"
                 className="flex-1 appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 required
               />
               <input
                 type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                value={formData.lastName}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
                 placeholder="Last name"
                 className="flex-1 appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 required
@@ -69,17 +109,32 @@ export default function SignUpPage() {
 
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               placeholder="Email address"
+              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              required
+            />
+
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="Password"
               className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               required
             />
 
             <div className="flex gap-2">
               <select
-                value={countryCode}
-                onChange={(e) => setCountryCode(e.target.value)}
+                value={formData.countryCode}
+                onChange={(e) =>
+                  setFormData({ ...formData, countryCode: e.target.value })
+                }
                 className="block rounded-lg w-32 px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {countryCodes.map((country, index) => (
@@ -91,8 +146,10 @@ export default function SignUpPage() {
 
               <input
                 type="tel"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={formData.phoneNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, phoneNumber: e.target.value })
+                }
                 placeholder="Phone number"
                 className="flex-1 appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               />
@@ -102,8 +159,10 @@ export default function SignUpPage() {
               <input
                 id="remember-me"
                 type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
+                checked={formData.rememberMe}
+                onChange={(e) =>
+                  setFormData({ ...formData, rememberMe: e.target.checked })
+                }
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label
@@ -113,6 +172,8 @@ export default function SignUpPage() {
                 Remember me for 30 days
               </label>
             </div>
+
+            {error && <div className="text-red-500 text-sm">{error}</div>}
           </div>
 
           <button
@@ -180,6 +241,22 @@ export default function SignUpPage() {
               />
             </svg>
             Sign in with Google
+          </button>
+
+          <button
+            type="button"
+            onClick={handleOracleSignIn}
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M16.46 7.67h4.75l-8.73 8.73-8.73-8.73h4.75l3.98 3.98 4-3.98zm-8.73 0h8.73l-4.36 4.36-4.37-4.36z" />
+            </svg>
+            Sign in with Oracle
           </button>
         </form>
       </div>

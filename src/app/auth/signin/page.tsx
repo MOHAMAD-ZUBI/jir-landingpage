@@ -1,23 +1,56 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { signIn } from "@/utils/authFunctions"; // Import Firebase auth function
+import { useRouter } from "next/navigation";
+import {
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/firebase";
 
 export default function SignInPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState(""); // Added password state
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState(""); // Added error state
+  const [loading, setLoading] = useState(false); // Added loading state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Sign in logic here
+    setLoading(true);
+    setError("");
+
+    try {
+      await signIn(email, password);
+      router.push("/dashboard"); // Redirect after successful sign in
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGithubSignIn = () => {
-    signIn("github", { callbackUrl: "/" });
+  const handleGithubSignIn = async () => {
+    try {
+      const provider = new GithubAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.push("/dashboard");
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/" });
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.push("/dashboard");
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -41,6 +74,16 @@ export default function SignInPage() {
               required
             />
 
+            {/* Added password input */}
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              required
+            />
+
             <div className="flex items-center">
               <input
                 id="remember-me"
@@ -56,13 +99,17 @@ export default function SignInPage() {
                 Remember me for 30 days
               </label>
             </div>
+
+            {/* Added error message display */}
+            {error && <div className="text-red-500 text-sm">{error}</div>}
           </div>
 
           <button
             type="submit"
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            disabled={loading}
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            Sign in
+            {loading ? "Signing in..." : "Sign in"}
           </button>
 
           <div className="relative">

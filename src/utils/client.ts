@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
@@ -13,11 +14,14 @@ const client = axios.create({
 // Request interceptor
 client.interceptors.request.use(
   (config) => {
-    // You can add auth tokens here if needed
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // Get the Firebase token from cookies
+    const token = Cookies.get("firebase-token");
+
+    // If token exists, add it to the Authorization header
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   },
   (error) => {
@@ -28,10 +32,12 @@ client.interceptors.request.use(
 // Response interceptor
 client.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Handle common errors here
+  async (error) => {
+    // Handle 401 errors (unauthorized)
     if (error.response?.status === 401) {
-      // Handle unauthorized
+      // Optional: You can handle token refresh here if needed
+      // or redirect to login page
+      window.location.href = "/auth/signin";
     }
     return Promise.reject(error);
   }

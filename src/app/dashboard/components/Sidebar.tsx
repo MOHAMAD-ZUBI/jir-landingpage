@@ -9,26 +9,8 @@ import {
   MdOutlineKeyboardArrowRight,
   MdPayments,
 } from "react-icons/md";
-import { RiListSettingsFill } from "react-icons/ri";
-import { FaEnvelopeOpenText } from "react-icons/fa6";
-
-import { FcWorkflow } from "react-icons/fc";
-import { BsBagDashFill, BsStars } from "react-icons/bs";
+import { logOut } from "@/utils/authFunctions";
 import SidebarLink from "./SidebarLink";
-import { FaCrown } from "react-icons/fa6";
-import { RiVipCrown2Fill } from "react-icons/ri";
-
-import { HiDocumentText, HiUsers } from "react-icons/hi2";
-import Link from "next/link";
-import { Button } from "@nextui-org/react";
-import Image from "next/image";
-import {
-  PiContactlessPaymentFill,
-  PiFileJpgBold,
-  PiPackageFill,
-  PiPackageLight,
-} from "react-icons/pi";
-import { signOut } from "next-auth/react";
 
 interface SidebarProps {
   handleSidebar: () => void;
@@ -85,7 +67,7 @@ const Sidebar: FC<SidebarProps> = ({ handleSidebar }) => {
       <div className="w-full">
         <button
           onClick={() => {
-            signOut();
+            logOut();
           }}
           className={
             "text-black group w-full mt-4 font-[450] text-[18px] flex flex-row items-center justify-between px-4 py-3 rounded-2xl duration-300 hover:bg-red-50/50 hover:text-red-400 "
