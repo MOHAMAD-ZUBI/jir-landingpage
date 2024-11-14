@@ -2,6 +2,7 @@
 import { useWorkspace } from "@/context/WorkspaceContext";
 
 import OracleDashboard from "./components/Oracle/OracleDashboard";
+import TıtleHeading from "./components/Reusable/TıtleHeading";
 
 const DashboardPage = () => {
   const { currentWorkspace } = useWorkspace();
@@ -11,12 +12,13 @@ const DashboardPage = () => {
       case "oracle":
         return (
           <div>
-            <h1 className="text-2xl font-bold mb-4">
-              Oracle Hyperion Dashboard
-            </h1>
+            <TıtleHeading
+              title="Oracle"
+              subheading="Oracle Hyperion Dashboard"
+            />
             {/* Oracle specific components */}
             <div className="grid gap-4">
-              <div className="p-4  rounded-lg ">
+              <div className="py-2 rounded-lg ">
                 <OracleDashboard />
               </div>
             </div>
@@ -26,7 +28,7 @@ const DashboardPage = () => {
       case "odoo":
         return (
           <div>
-            <h1 className="text-2xl font-bold mb-4">Odoo Dashboard</h1>
+            <TıtleHeading title="Odoo" subheading="Odoo Dashboard" />
             {/* Odoo specific components */}
             <div className="grid gap-4">
               <div className="p-4 bg-white rounded-lg shadow">
@@ -40,7 +42,7 @@ const DashboardPage = () => {
       case "ai_agent":
         return (
           <div>
-            <h1 className="text-2xl font-bold mb-4">AI Agent Dashboard</h1>
+            <TıtleHeading title="AI Agent" subheading="AI Agent Dashboard" />
             {/* AI Agent specific components */}
             <div className="grid gap-4">
               <div className="p-4 bg-white rounded-lg shadow">

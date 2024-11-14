@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import AddNestedJob from "./AddNestedJob";
+
 import {
   Button,
   Modal,
@@ -8,7 +9,14 @@ import {
   ModalHeader,
   ModalBody,
   useDisclosure,
+  Divider,
 } from "@nextui-org/react";
+import { HiMiniQueueList } from "react-icons/hi2";
+
+import AddNewChecker from "./AddNewChecker";
+import WidgetCarousel from "./WidgetCarousel";
+import AutomatedJobs, { AutomatedJob } from "./AutomatedJobs";
+import ActionsSection from "./ActionsSection";
 
 type Props = {};
 
@@ -18,6 +26,38 @@ const OracleDashboard = (props: Props) => {
     "job" | "checker" | "rule" | null
   >(null);
 
+  const checkers = [
+    {
+      name: "Checker 1",
+      comparison_val: 990283823,
+      real_val: 990283823,
+      intersections: [],
+    },
+    {
+      name: "Checker 2",
+      comparison_val: 990283823,
+      real_val: 990283823,
+      intersections: [],
+    },
+  ];
+
+  const automatedJobs: AutomatedJob[] = [
+    {
+      name: "Job 1",
+      description: "Job 1 Description",
+      createdAt: "11/14/2024 12:00 PM",
+    },
+    {
+      name: "Job 2",
+      description: "Job 2 Description",
+      createdAt: "11/14/2024 12:00 PM",
+    },
+    {
+      name: "Job 3",
+      description: "Job 3 Description",
+      createdAt: "11/14/2024 12:00 PM",
+    },
+  ];
   const handleOpenModal = (type: "job" | "checker" | "rule") => {
     setModalType(type);
     onOpen();
@@ -41,7 +81,7 @@ const OracleDashboard = (props: Props) => {
       case "job":
         return <AddNestedJob />;
       case "checker":
-        return <div>Checker Form Coming Soon</div>;
+        return <AddNewChecker />;
       case "rule":
         return <div>Rule Form Coming Soon</div>;
       default:
@@ -50,17 +90,43 @@ const OracleDashboard = (props: Props) => {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex gap-4">
-        <Button color="primary" onPress={() => handleOpenModal("job")}>
-          Add Job
-        </Button>
-        <Button color="primary" onPress={() => handleOpenModal("checker")}>
-          Add Checker
-        </Button>
-        <Button color="primary" onPress={() => handleOpenModal("rule")}>
-          Add Rule
-        </Button>
+    <div className="container mx-auto px-4 py-6">
+      <div className="grid gap-6">
+        {/* Header Section */}
+        <div className="bg-content1 rounded-lg p-4 shadow-sm">
+          <h1 className="text-2xl font-semibold mb-2">Oracle Dashboard</h1>
+          <p className="text-default-500">
+            Monitor and manage your automated tasks
+          </p>
+        </div>
+
+        {/* Widgets Section */}
+        <div className="bg-content1 rounded-lg p-4 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Status Overview</h2>
+          <WidgetCarousel checkers={checkers} />
+        </div>
+
+        {/* Actions Section */}
+        <div className="bg-content1 rounded-lg p-4 shadow-sm">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <HiMiniQueueList /> <span>Actions</span>
+          </h2>
+          <p className="text-sm text-gray-500">
+            Add a job, checker or rule to get started
+          </p>
+          <ActionsSection onOpenModal={handleOpenModal} />
+        </div>
+
+        {/* Jobs Section */}
+        <div className="bg-content1 rounded-lg p-4 shadow-sm">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <HiMiniQueueList /> <span>Automated Jobs</span>
+          </h2>
+          <p className="text-sm text-gray-500">
+            View and manage your automated jobs
+          </p>
+          <AutomatedJobs automatedJobs={automatedJobs} />
+        </div>
       </div>
 
       <Modal

@@ -23,7 +23,7 @@ const UserDropdown = (props: Props) => {
         onAction={(key) => alert(key)}
       >
         <DropdownItem key="new">Credits</DropdownItem>
-        <DropdownItem key="copy">My Resumes</DropdownItem>
+        <DropdownItem key="copy">Settings</DropdownItem>
         <DropdownItem key="delete" className="text-danger" color="danger">
           Log out
         </DropdownItem>

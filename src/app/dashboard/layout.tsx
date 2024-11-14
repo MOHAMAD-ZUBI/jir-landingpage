@@ -1,5 +1,5 @@
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
-import DashboardLayout from "./components/DashboardLayout";
+import DashboardLayout from "./components/main/DashboardLayout";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

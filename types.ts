@@ -14,3 +14,18 @@ export type Job = {
   name: string;
   rules: Rule[];
 };
+
+export type Checker = {
+  name: string;
+  comparison_val: number;
+  real_val: number;
+  intersections: Intersection[];
+};
+
+export type Intersection = {
+  op: string;
+  intersection_json: {
+    key: string;
+    value: string;
+  };
+};

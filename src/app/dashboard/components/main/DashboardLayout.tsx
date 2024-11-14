@@ -20,9 +20,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     setIsSidebarClosed(!isSidebarClosed);
   };
   return (
-    <main className="flex flex-row min-h-screen min-w-full  text-foreground  ">
+    <main className="flex flex-row min-h-screen min-w-full text-foreground">
       <div
-        className={`w-[300px]  ${sidebarWidth} h-full max-md:fixed  max-sm:top-0 max-sm:left-0 max-sm:bottom-0   overflow-hidden  transition-all duration-500`}
+        className={`w-[300px] ${sidebarWidth} h-full max-md:fixed max-sm:top-0 max-sm:left-0 max-sm:bottom-0 overflow-hidden transition-all duration-500`}
       >
         <Sidebar handleSidebar={handleSidebar} />
       </div>
@@ -38,9 +38,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           ></motion.div>
         )}
       </AnimatePresence>
-      <div className="h-screen flex-1 bg-[#F5F7F9]">
+      <div className="flex-1 flex flex-col bg-[#F5F7F9] min-h-screen">
         <Nav handleSidebar={handleSidebar} />
-        <div className="px-10 py-8 max-md:px-4">{children}</div>
+        <div className="flex-1 px-10 py-8 max-md:px-4">{children}</div>
       </div>
     </main>
   );

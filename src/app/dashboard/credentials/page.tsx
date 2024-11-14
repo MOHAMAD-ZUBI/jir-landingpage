@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Input } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";
+import TıtleHeading from "../components/Reusable/TıtleHeading";
 
 const CredentialsPage = () => {
   // Add state for form data
@@ -44,10 +45,10 @@ const CredentialsPage = () => {
       {/* Add Toaster component */}
       <Toaster position="top-right" />
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold">Credentials</h1>
-        <p className="text-gray-500">Manage your workspace credentials.</p>
-      </div>
+      <TıtleHeading
+        title="Credentials"
+        subheading="Manage your workspace credentials."
+      />
 
       {/* Oracle Hyperion Section */}
       <div className="mb-10">

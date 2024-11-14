@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Input, Select, SelectItem } from "@nextui-org/react";
-import { signUp } from "@/utils/authFunctions"; // Import Firebase auth function
+import { Input, Link, Select, SelectItem } from "@nextui-org/react";
+import { signUp, customSignUp } from "@/utils/authFunctions"; // Import Firebase auth function
 import { useRouter } from "next/navigation"; // For redirecting after signup
 import {
   GithubAuthProvider,
@@ -36,9 +36,10 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const userCredential = await signUp(formData.email, formData.password);
-      // You might want to store additional user data (firstName, lastName, etc.)
-      // in Firebase Realtime Database or Firestore here
+      const userCredential = await customSignUp(
+        formData.email,
+        formData.password
+      );
 
       router.push("/dashboard"); // Redirect to dashboard after successful signup
     } catch (error: any) {
@@ -183,6 +184,10 @@ export default function SignUpPage() {
             Create account
           </button>
 
+          <p className="text-sm text-gray-600">
+            Already have an account? <Link href="/auth/signin">Sign in</Link>
+          </p>
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
@@ -192,7 +197,7 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={handleGithubSignIn}
             className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -210,7 +215,7 @@ export default function SignUpPage() {
               />
             </svg>
             Sign in with GitHub
-          </button>
+          </button> */}
 
           <button
             type="button"
@@ -243,7 +248,7 @@ export default function SignUpPage() {
             Sign in with Google
           </button>
 
-          <button
+          {/* <button
             type="button"
             onClick={handleOracleSignIn}
             className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -257,7 +262,7 @@ export default function SignUpPage() {
               <path d="M16.46 7.67h4.75l-8.73 8.73-8.73-8.73h4.75l3.98 3.98 4-3.98zm-8.73 0h8.73l-4.36 4.36-4.37-4.36z" />
             </svg>
             Sign in with Oracle
-          </button>
+          </button> */}
         </form>
       </div>
     </div>
