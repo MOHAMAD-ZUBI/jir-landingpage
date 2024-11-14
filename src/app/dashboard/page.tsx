@@ -11,16 +11,9 @@ const DashboardPage = () => {
     switch (currentWorkspace.type) {
       case "oracle":
         return (
-          <div>
-            <TıtleHeading
-              title="Oracle"
-              subheading="Oracle Hyperion Dashboard"
-            />
-            {/* Oracle specific components */}
-            <div className="grid gap-4">
-              <div className="py-2 rounded-lg ">
-                <OracleDashboard />
-              </div>
+          <div className="w-full ">
+            <div className="w-full">
+              <OracleDashboard />
             </div>
           </div>
         );
@@ -58,7 +51,13 @@ const DashboardPage = () => {
     }
   };
 
-  return <div className="container mx-auto">{renderWorkspaceContent()}</div>;
+  return (
+    <div className="w-full overflow-x-hidden">
+      <div className="max-w-[1400px] mx-auto w-full px-4">
+        {renderWorkspaceContent()}
+      </div>
+    </div>
+  );
 };
 
 export default DashboardPage;

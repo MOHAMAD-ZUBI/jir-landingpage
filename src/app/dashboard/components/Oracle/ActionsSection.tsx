@@ -11,13 +11,13 @@ const ActionsSection = ({ onOpenModal }: Props) => {
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap mt-2 gap-2">
-        <Button color="primary" onPress={() => onOpenModal("job")}>
+        <Button color="default" onPress={() => onOpenModal("job")}>
           Add Job
         </Button>
-        <Button color="primary" onPress={() => onOpenModal("checker")}>
+        <Button color="default" onPress={() => onOpenModal("checker")}>
           Add Checker
         </Button>
-        <Button color="primary" onPress={() => onOpenModal("rule")}>
+        <Button color="default" onPress={() => onOpenModal("rule")}>
           Add Rule
         </Button>
       </div>

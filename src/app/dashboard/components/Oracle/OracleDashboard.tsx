@@ -12,12 +12,14 @@ import {
   Divider,
 } from "@nextui-org/react";
 import { HiMiniQueueList } from "react-icons/hi2";
-
+import { TbStatusChange } from "react-icons/tb";
 import AddNewChecker from "./AddNewChecker";
 import WidgetCarousel from "./WidgetCarousel";
 import AutomatedJobs, { AutomatedJob } from "./AutomatedJobs";
 import ActionsSection from "./ActionsSection";
-
+import { MdOutlinePendingActions } from "react-icons/md";
+import { SiEventstore } from "react-icons/si";
+import AddRule from "./AddRule";
 type Props = {};
 
 const OracleDashboard = (props: Props) => {
@@ -39,21 +41,33 @@ const OracleDashboard = (props: Props) => {
       real_val: 990283823,
       intersections: [],
     },
+    {
+      name: "Checker 3",
+      comparison_val: 990283823,
+      real_val: 990283823,
+      intersections: [],
+    },
+    {
+      name: "Checker 4",
+      comparison_val: 990283823,
+      real_val: 990283823,
+      intersections: [],
+    },
   ];
 
   const automatedJobs: AutomatedJob[] = [
     {
-      name: "Job 1",
+      title: "Job 1",
       description: "Job 1 Description",
       createdAt: "11/14/2024 12:00 PM",
     },
     {
-      name: "Job 2",
+      title: "Job 2",
       description: "Job 2 Description",
       createdAt: "11/14/2024 12:00 PM",
     },
     {
-      name: "Job 3",
+      title: "Job 3",
       description: "Job 3 Description",
       createdAt: "11/14/2024 12:00 PM",
     },
@@ -83,33 +97,37 @@ const OracleDashboard = (props: Props) => {
       case "checker":
         return <AddNewChecker />;
       case "rule":
-        return <div>Rule Form Coming Soon</div>;
+        return <AddRule />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="w-full px-4 py-6">
-      <div className="grid gap-6">
+    <div className="w-full max-w-[1500px] mx-auto">
+      <div className="grid gap-6 w-full">
         {/* Header Section */}
-        <div className="bg-content1 rounded-lg p-4 shadow-sm">
-          <h1 className="text-2xl font-semibold mb-2">Oracle Dashboard</h1>
-          <p className="text-default-500">
+        <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <HiMiniQueueList /> <span>Oracle Dashboard</span>
+          </h2>
+          <p className="text-sm text-gray-500">
             Monitor and manage your automated tasks
           </p>
         </div>
-
         {/* Widgets Section */}
-        <div className="bg-content1 rounded-lg p-4 shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Status Overview</h2>
+        <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <TbStatusChange /> <span>Checker Status</span>
+          </h2>
+
           <WidgetCarousel checkers={checkers} />
         </div>
 
         {/* Actions Section */}
-        <div className="bg-content1 rounded-lg p-4 shadow-sm">
+        <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <HiMiniQueueList /> <span>Actions</span>
+            <SiEventstore /> <span>Actions</span>
           </h2>
           <p className="text-sm text-gray-500">
             Add a job, checker or rule to get started
@@ -118,9 +136,9 @@ const OracleDashboard = (props: Props) => {
         </div>
 
         {/* Jobs Section */}
-        <div className="bg-content1 rounded-lg p-4 shadow-sm">
+        <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <HiMiniQueueList /> <span>Automated Jobs</span>
+            <MdOutlinePendingActions /> <span>Automated Jobs</span>
           </h2>
           <p className="text-sm text-gray-500">
             View and manage your automated jobs

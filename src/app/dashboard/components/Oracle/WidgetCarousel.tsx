@@ -4,6 +4,8 @@ import useEmblaCarousel from "embla-carousel-react";
 import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
 import Widget from "./Widget";
 import { Checker } from "../../../../../types";
+import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
 
 const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start" });
@@ -27,15 +29,70 @@ const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
   }, [emblaApi]);
 
   return (
-    <div className="relative w-full">
+    <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {checkers?.map((checker, index) => (
             <div
               key={index}
-              className="flex-[0_0_100%] min-w-0 pr-4 first:pl-4"
+              className="flex-shrink-0 m-6 relative overflow-hidden bg-blue-500 rounded-lg md:max-w-xl max-w-xs w-full shadow-lg"
             >
-              <Widget checker={checker} />
+              <svg
+                className="absolute bottom-0 left-0 mb-8"
+                viewBox="0 0 375 283"
+                fill="none"
+                style={{ transform: "scale(1.5)", opacity: "0.1" }}
+              >
+                <rect
+                  x="159.52"
+                  y="175"
+                  width="152"
+                  height="152"
+                  rx="8"
+                  transform="rotate(-45 159.52 175)"
+                  fill="white"
+                />
+                <rect
+                  y="107.48"
+                  width="152"
+                  height="152"
+                  rx="8"
+                  transform="rotate(-45 0 107.48)"
+                  fill="white"
+                />
+              </svg>
+              <div className="relative pt-10 px-10 flex items-center justify-center">
+                <div
+                  className="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
+                  style={{
+                    background: "radial-gradient(black, transparent 60%)",
+                    transform: "rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1)",
+                    opacity: "0.2",
+                  }}
+                ></div>
+              </div>
+              <div className="relative text-white px-6 pb-6 mt-6">
+                <span className="block opacity-75 -mb-1">Checker Status</span>
+                <div className="flex flex-col gap-2">
+                  <div className="flex justify-between items-center">
+                    <span className="block font-semibold text-xl">
+                      {checker.name || "Unnamed Checker"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Actual:</span>
+                    <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
+                      ${checker.real_val}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Expected:</span>
+                    <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
+                      ${checker.comparison_val}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
