@@ -10,7 +10,7 @@ type Props = {
 const ActionsSection = ({ onOpenModal }: Props) => {
   return (
     <div className="space-y-2">
-      <div className="flex mt-2 gap-4">
+      <div className="flex flex-wrap mt-2 gap-2">
         <Button color="primary" onPress={() => onOpenModal("job")}>
           Add Job
         </Button>

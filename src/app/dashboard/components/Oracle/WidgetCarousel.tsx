@@ -27,11 +27,14 @@ const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
   }, [emblaApi]);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {checkers?.map((checker, index) => (
-            <div key={index} className="flex-[0_0_100%] min-w-0 px-4">
+            <div
+              key={index}
+              className="flex-[0_0_100%] min-w-0 pr-4 first:pl-4"
+            >
               <Widget checker={checker} />
             </div>
           ))}

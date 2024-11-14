@@ -13,12 +13,12 @@ const AutomatedJobs = ({
   automatedJobs: AutomatedJob[];
 }) => {
   return (
-    <div className=" flex flex-col gap-4 mt-2">
-      <div className=" flex flex-wrap gap-4">
+    <div className="flex flex-col gap-4 mt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {automatedJobs?.map((job, index) => (
           <div
             key={index}
-            className="bg-gray-200 w-[200px] rounded-lg cursor-pointer p-4 shadow-md"
+            className="bg-gray-200 rounded-lg cursor-pointer p-4 shadow-md w-full"
           >
             <h2 className="text-2x font-bold">{job?.name}</h2>
             <p className="text-sm text-gray-500">{job?.createdAt}</p>
