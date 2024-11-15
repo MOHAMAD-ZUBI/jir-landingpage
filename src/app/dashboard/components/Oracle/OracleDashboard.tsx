@@ -20,6 +20,8 @@ import ActionsSection from "./ActionsSection";
 import { MdOutlinePendingActions } from "react-icons/md";
 import { SiEventstore } from "react-icons/si";
 import AddRule from "./Actions/AddRule";
+import { FaRegFileAlt } from "react-icons/fa";
+import Logs from "./Logs";
 type Props = {};
 
 const OracleDashboard = (props: Props) => {
@@ -145,6 +147,10 @@ const OracleDashboard = (props: Props) => {
           </p>
           <AutomatedJobs automatedJobs={automatedJobs} />
         </div>
+
+        {/* Logs Section */}
+
+        <Logs />
       </div>
 
       <Modal

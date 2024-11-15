@@ -31,11 +31,11 @@ const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
   return (
     <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex">
+        <div className="flex ">
           {checkers?.map((checker, index) => (
             <div
               key={index}
-              className="flex-shrink-0 m-6 relative overflow-hidden bg-blue-500 rounded-lg md:max-w-xl max-w-xs w-full shadow-lg"
+              className="flex-shrink-0 m-6 relative overflow-hidden bg-blue-500 rounded-lg md:max-w-xl max-w-sm w-full shadow-lg"
             >
               <svg
                 className="absolute bottom-0 left-0 mb-8"
