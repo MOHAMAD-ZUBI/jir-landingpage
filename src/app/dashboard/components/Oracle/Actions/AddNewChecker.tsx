@@ -10,7 +10,7 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import client from "@/utils/client";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { IoAdd } from "react-icons/io5";
 import { FaTrash } from "react-icons/fa";
 
@@ -131,6 +131,7 @@ const AddNewChecker = () => {
   return (
     <Card className="p-6 max-w-2xl">
       <form onSubmit={handleSubmit} className="space-y-6">
+        <Toaster position="top-right" />
         <Input
           label="Checker Name"
           placeholder="Enter checker name"
@@ -237,6 +238,7 @@ const AddNewChecker = () => {
           type="submit"
           color="primary"
           isLoading={isLoading}
+          isDisabled={isLoading || !formData.name || !formData.comparison_val}
           className="w-full"
         >
           Create Checker

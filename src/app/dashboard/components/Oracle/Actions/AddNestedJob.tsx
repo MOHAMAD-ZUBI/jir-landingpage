@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
-import { Job } from "../../../../../types";
+import { Job } from "../../../../../../types";
 
 export default function CreateJob() {
   const [formData, setFormData] = useState<Job>({

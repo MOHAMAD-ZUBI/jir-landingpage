@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import AddNestedJob from "./AddNestedJob";
+import AddNestedJob from "./Actions/AddNestedJob";
 
 import {
   Button,
@@ -13,13 +13,13 @@ import {
 } from "@nextui-org/react";
 import { HiMiniQueueList } from "react-icons/hi2";
 import { TbStatusChange } from "react-icons/tb";
-import AddNewChecker from "./AddNewChecker";
+import AddNewChecker from "./Actions/AddNewChecker";
 import WidgetCarousel from "./WidgetCarousel";
 import AutomatedJobs, { AutomatedJob } from "./AutomatedJobs";
 import ActionsSection from "./ActionsSection";
 import { MdOutlinePendingActions } from "react-icons/md";
 import { SiEventstore } from "react-icons/si";
-import AddRule from "./AddRule";
+import AddRule from "./Actions/AddRule";
 type Props = {};
 
 const OracleDashboard = (props: Props) => {
