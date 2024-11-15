@@ -99,7 +99,7 @@ const Logs: React.FC = () => {
   return (
     <Card>
       <CardBody>
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+        <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold mb-2 flex items-center gap-2">
           <RxActivityLog /> <span>Activity Logs</span>
         </h2>
         <Table

@@ -110,7 +110,7 @@ const OracleDashboard = (props: Props) => {
       <div className="flex flex-col gap-6 w-full">
         {/* Header Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
             <HiMiniQueueList /> <span>Oracle Dashboard</span>
           </h2>
           <p className="text-sm text-gray-500">
@@ -119,7 +119,7 @@ const OracleDashboard = (props: Props) => {
         </div>
         {/* Widgets Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
             <TbStatusChange /> <span>Checker Status</span>
           </h2>
 
@@ -128,7 +128,7 @@ const OracleDashboard = (props: Props) => {
 
         {/* Actions Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
             <SiEventstore /> <span>Actions</span>
           </h2>
           <p className="text-sm text-gray-500">
@@ -139,7 +139,7 @@ const OracleDashboard = (props: Props) => {
 
         {/* Jobs Section */}
         <div className="bg-content1 rounded-lg p-4  shadow-sm w-full">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
             <MdOutlinePendingActions /> <span>Automated Jobs</span>
           </h2>
           <p className="text-sm text-gray-500">
