@@ -31,7 +31,7 @@ const Links = [
 ];
 const Sidebar: FC<SidebarProps> = ({ handleSidebar }) => {
   return (
-    <div className="p-6 bg-white/80 h-full  flex flex-col justify-between min-h-screen    ">
+    <div className="fixed p-6 bg-white/80 h-screen flex flex-col justify-between w-[300px]">
       <div>
         <div className="flex flex-row w-full justify-between items-center">
           <div className="p-3 flex flex-row items-center gap-2 text-primaryDashboard">
