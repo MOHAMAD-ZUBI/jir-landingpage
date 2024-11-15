@@ -104,8 +104,8 @@ const OracleDashboard = (props: Props) => {
   };
 
   return (
-    <div className="w-full max-w-[1500px] mx-auto">
-      <div className="grid gap-6 w-full">
+    <div className="w-full max-w-[1500px]  mx-auto">
+      <div className="flex flex-col gap-6 w-full">
         {/* Header Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -136,7 +136,7 @@ const OracleDashboard = (props: Props) => {
         </div>
 
         {/* Jobs Section */}
-        <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
+        <div className="bg-content1 rounded-lg p-4  shadow-sm w-full">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <MdOutlinePendingActions /> <span>Automated Jobs</span>
           </h2>

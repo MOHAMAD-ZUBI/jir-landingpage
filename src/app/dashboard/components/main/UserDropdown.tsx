@@ -10,6 +10,7 @@ import {
   Avatar,
 } from "@nextui-org/react";
 import { useAuth } from "@/context/AuthContext";
+import { logOut } from "@/utils/authFunctions";
 
 type Props = {};
 
@@ -35,7 +36,15 @@ const UserDropdown = (props: Props) => {
         <DropdownItem key="email">{user?.email}</DropdownItem>
         <DropdownItem key="new">Credits</DropdownItem>
         <DropdownItem key="copy">Settings</DropdownItem>
-        <DropdownItem key="delete" className="text-danger" color="danger">
+        <DropdownItem
+          key="delete"
+          onClick={() => {
+            logOut();
+            window.location.reload();
+          }}
+          className="text-danger"
+          color="danger"
+        >
           Log out
         </DropdownItem>
       </DropdownMenu>
