@@ -241,7 +241,7 @@ const AddNewChecker = () => {
           isDisabled={isLoading || !formData.name || !formData.comparison_val}
           className="w-full"
         >
-          Create Checker
+          Create Checkers
         </Button>
       </form>
     </Card>
