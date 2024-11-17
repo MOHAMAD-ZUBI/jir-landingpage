@@ -283,7 +283,7 @@ export default function CreateJob({
                 onClick={() => handleAddParam(ruleIndex)}
                 type="button"
               >
-                Add Parameter
+                Add Parameter.
               </Button>
             </CardBody>
           </Card>

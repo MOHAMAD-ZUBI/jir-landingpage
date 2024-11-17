@@ -106,7 +106,7 @@ const OracleDashboard = (props: Props) => {
   };
 
   return (
-    <div className="w-full max-w-[1500px]  mx-auto">
+    <div className="w-full max-w-[1500px] mx-auto">
       <div className="flex flex-col gap-6 w-full">
         {/* Header Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">

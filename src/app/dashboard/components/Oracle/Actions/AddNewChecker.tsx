@@ -253,7 +253,7 @@ const AddNewChecker = () => {
                     <div className="col-span-4">
                       <Input
                         label="Value"
-                        placeholder="Enter value"
+                        placeholder="Enter value."
                         value={dimension.value}
                         onChange={(e) =>
                           updateIntersection(
