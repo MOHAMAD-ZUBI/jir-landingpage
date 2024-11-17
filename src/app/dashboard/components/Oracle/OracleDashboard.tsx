@@ -95,7 +95,7 @@ const OracleDashboard = (props: Props) => {
   const getModalContent = () => {
     switch (modalType) {
       case "job":
-        return <AddNestedJob />;
+        return <AddNestedJob onOpenRuleModal={() => handleOpenModal("rule")} />;
       case "checker":
         return <AddNewChecker />;
       case "rule":
@@ -106,7 +106,7 @@ const OracleDashboard = (props: Props) => {
   };
 
   return (
-    <div className="w-full max-w-[1500px]  mx-auto">
+    <div className="w-full max-w-[1500px] mx-auto">
       <div className="flex flex-col gap-6 w-full">
         {/* Header Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
