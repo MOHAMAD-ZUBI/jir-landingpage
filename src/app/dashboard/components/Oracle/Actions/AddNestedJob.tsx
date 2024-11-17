@@ -14,8 +14,13 @@ import {
 import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
 import { Job } from "../../../../../../types";
+import AddRule from "./AddRule";
 
-export default function CreateJob() {
+export default function CreateJob({
+  onOpenRuleModal,
+}: {
+  onOpenRuleModal: () => void;
+}) {
   const [formData, setFormData] = useState<Job>({
     name: "",
     rules: [
@@ -51,6 +56,20 @@ export default function CreateJob() {
       rules: prev.rules.map((rule, idx) =>
         idx === ruleIndex
           ? { ...rule, params: [...rule.params, { name: "", value: "" }] }
+          : rule
+      ),
+    }));
+  };
+
+  const handleDeleteParam = (ruleIndex: number, paramIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      rules: prev.rules.map((rule, idx) =>
+        idx === ruleIndex
+          ? {
+              ...rule,
+              params: rule.params.filter((_, pIdx) => pIdx !== paramIndex),
+            }
           : rule
       ),
     }));
@@ -122,6 +141,10 @@ export default function CreateJob() {
     }));
   };
 
+  const handleCreateRule = () => {
+    onOpenRuleModal();
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Toaster position="top-right" />
@@ -158,6 +181,14 @@ export default function CreateJob() {
                 </Select>
 
                 <div className="flex items-center gap-4 min-w-fit">
+                  <Button
+                    color="primary"
+                    variant="flat"
+                    onClick={() => handleCreateRule()}
+                    type="button"
+                  >
+                    New Rule
+                  </Button>
                   <Checkbox
                     isSelected={!!rule.continue_if_failed}
                     onValueChange={(checked) =>
@@ -221,6 +252,28 @@ export default function CreateJob() {
                     }
                     className="flex-1"
                   />
+                  <Button
+                    color="danger"
+                    className="flex items-center justify-center text-center"
+                    variant="light"
+                    isIconOnly
+                    onClick={() => handleDeleteParam(ruleIndex, paramIndex)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18 18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </Button>
                 </div>
               ))}
 

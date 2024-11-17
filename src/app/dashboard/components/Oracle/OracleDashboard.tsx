@@ -95,7 +95,7 @@ const OracleDashboard = (props: Props) => {
   const getModalContent = () => {
     switch (modalType) {
       case "job":
-        return <AddNestedJob />;
+        return <AddNestedJob onOpenRuleModal={() => handleOpenModal("rule")} />;
       case "checker":
         return <AddNewChecker />;
       case "rule":
