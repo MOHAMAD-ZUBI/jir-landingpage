@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Input,
   Button,
@@ -13,22 +13,39 @@ import {
 } from "@nextui-org/react";
 import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
-import { Job } from "../../../../../../types";
+import { Job, Rule } from "../../../../../../types";
 
 export default function CreateJob() {
   const [formData, setFormData] = useState<Job>({
     name: "",
+
     rules: [
       {
         rule: 0,
+        id: 0,
+        name: "",
         index: 0,
-        continue_if_failed: true,
+        continue_if_failed: false,
         params: [{ name: "", value: "" }],
       },
     ],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [Rules, setRules] = useState<Rule[]>([]);
+
+  console.log({ formData });
+
+  const fetchRules = async () => {
+    const { data } = await client.get("/v2/api/rules/");
+    setRules(data);
+  };
+
+  useEffect(() => {
+    fetchRules();
+  }, []);
+
+  console.log({ Rules });
 
   const handleAddRule = () => {
     setFormData((prev) => ({
@@ -37,8 +54,10 @@ export default function CreateJob() {
         ...prev.rules,
         {
           rule: 0,
+          id: 0,
+          name: "",
           index: prev.rules.length,
-          continue_if_failed: true,
+          continue_if_failed: false,
           params: [{ name: "", value: "" }],
         },
       ],
@@ -149,12 +168,11 @@ export default function CreateJob() {
                   }
                   className="flex-1"
                 >
-                  <SelectItem key="21" value="21">
-                    Rule 21
-                  </SelectItem>
-                  <SelectItem key="22" value="22">
-                    Rule 22
-                  </SelectItem>
+                  {Rules.map((rule) => (
+                    <SelectItem key={rule.id} value={rule.id.toString()}>
+                      {rule.name}
+                    </SelectItem>
+                  ))}
                 </Select>
 
                 <div className="flex items-center gap-4 min-w-fit">

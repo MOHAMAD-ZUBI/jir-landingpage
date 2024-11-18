@@ -11,8 +11,8 @@ import {
 
 interface JobCard {
   title: string;
-  description: string;
-  createdAt: string;
+  status: boolean;
+  sharedWGroups: boolean;
 }
 
 export default function App({ job }: { job: JobCard }) {
@@ -21,12 +21,14 @@ export default function App({ job }: { job: JobCard }) {
       <CardHeader className="flex gap-3">
         <div className="flex flex-col">
           <p className="text-lg font-semibold">{job.title}</p>
-          <p className="text-small text-gray-100">{job.createdAt}</p>
+          <p className="text-small text-gray-100">
+            Shared: {job.sharedWGroups ? "Yes" : "No"}
+          </p>
         </div>
       </CardHeader>
       <Divider />
       <CardBody>
-        <p>{job.description}</p>
+        <p>Status: {job.status ? "Active" : "Inactive"}</p>
       </CardBody>
       <Divider />
     </Card>

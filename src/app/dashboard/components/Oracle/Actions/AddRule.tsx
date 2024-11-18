@@ -1,14 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import client from "@/utils/client";
 import { Input, Textarea, Button } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";
+import { Rule } from "../../../../../../types";
 
 type Props = {
   onSuccess?: () => void;
 };
 
 const AddRule = ({ onSuccess }: Props) => {
+  const [Rules, setRules] = useState<Rule[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     rule: "",
@@ -16,6 +18,22 @@ const AddRule = ({ onSuccess }: Props) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const ruleTypes = [
+    { name: "", id: 1 },
+    {
+      name: "Group",
+      id: 2,
+    },
+    {
+      name: "User",
+      id: 3,
+    },
+    {
+      name: "Role",
+      id: 4,
+    },
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

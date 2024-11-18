@@ -1,5 +1,7 @@
 export type Rule = {
-  rule: number;
+  id: number;
+  name: string;
+  rule: string;
   index: number;
   continue_if_failed: boolean | string;
   params: Param[];
@@ -12,7 +14,14 @@ export type Param = {
 
 export type Job = {
   name: string;
-  rules: Rule[];
+  rules: {
+    rule: number;
+    id: number;
+    name: string;
+    index: number;
+    continue_if_failed: boolean;
+    params: Param[];
+  }[];
 };
 
 export type Checker = {

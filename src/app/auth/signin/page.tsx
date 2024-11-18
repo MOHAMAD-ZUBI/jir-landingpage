@@ -13,19 +13,18 @@ import { auth } from "@/firebase";
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); // Added password state
+  const [password, setPassword] = useState(""); 
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState(""); // Added error state
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [error, setError] = useState(""); 
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
       await signIn(email, password);
-      router.push("/dashboard"); // Redirect after successful sign in
+      router.push("/dashboard"); 
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -52,6 +51,8 @@ export default function SignInPage() {
       setError(error.message);
     }
   };
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

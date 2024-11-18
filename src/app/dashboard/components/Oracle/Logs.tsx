@@ -15,35 +15,43 @@ import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { BiLoaderAlt } from "react-icons/bi";
 import { SiEventstore } from "react-icons/si";
 import { RxActivityLog } from "react-icons/rx";
+import { useEffect } from "react";
+import client from "@/utils/client";
 
 interface LogEntry {
-  id: string;
-  jobName: string;
-  status: "completed" | "failed" | "running";
-  timestamp: string;
-  message?: string;
+  id: number;
+  name: string;
+  status: number;
+  log: string;
+  created_at: string;
+  // ... other fields can be added if needed
 }
 
 const Logs: React.FC = () => {
   const [page, setPage] = React.useState(1);
+  const [logEntries, setLogEntries] = React.useState<LogEntry[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const rowsPerPage = 10;
-  const isMobile = window.innerWidth <= 768;
 
-  // Mock data - replace with actual data from your API/state
-  const logEntries: LogEntry[] = [
-    {
-      id: "1",
-      jobName: "Data Sync",
-      status: "completed",
-      timestamp: "2024-03-20 14:30:00",
-      message: "Successfully synchronized data",
-    },
-    // Add more entries as needed
-  ];
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        setLoading(true);
+        const { data } = await client.get("/v2/api/activities/");
+        setLogEntries(data);
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogs();
+  }, []);
 
   const columns = [
     {
-      key: "jobName",
+      key: "name",
       label: "JOB NAME",
     },
     {
@@ -51,13 +59,13 @@ const Logs: React.FC = () => {
       label: "STATUS",
     },
     {
-      key: "timestamp",
+      key: "created_at",
       label: "TIMESTAMP",
       className: "hidden md:table-cell",
     },
     {
-      key: "message",
-      label: "MESSAGE",
+      key: "log",
+      label: "LOG",
       className: "hidden md:table-cell",
     },
   ];
@@ -65,24 +73,19 @@ const Logs: React.FC = () => {
   const renderCell = (item: LogEntry, columnKey: keyof LogEntry) => {
     if (columnKey === "status") {
       const statusConfig = {
-        completed: {
+        1: {
           color: "success",
           icon: <FaCheckCircle className="text-lg" />,
           text: "Completed",
         },
-        failed: {
-          color: "danger",
-          icon: <FaTimesCircle className="text-lg" />,
-          text: "Running",
-        },
-        running: {
+        0: {
           color: "warning",
           icon: <BiLoaderAlt className="text-lg animate-spin" />,
           text: "Running",
         },
       };
 
-      const config = statusConfig[item.status];
+      const config = statusConfig[item.status as keyof typeof statusConfig];
       return (
         <Chip
           startContent={config.icon}
@@ -93,6 +96,11 @@ const Logs: React.FC = () => {
         </Chip>
       );
     }
+
+    if (columnKey === "created_at") {
+      return new Date(item.created_at).toLocaleString();
+    }
+
     return item[columnKey];
   };
 
@@ -120,6 +128,8 @@ const Logs: React.FC = () => {
           classNames={{
             wrapper: "min-h-[400px]",
           }}
+          //@ts-ignore
+          loadingContent={<BiLoaderAlt className="animate-spin text-2xl" />}
         >
           <TableHeader>
             {columns.map((column) => (
