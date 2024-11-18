@@ -36,10 +36,7 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const userCredential = await customSignUp(
-        formData.email,
-        formData.password
-      );
+      const userCredential = await signUp(formData.email, formData.password);
 
       router.push("/dashboard"); // Redirect to dashboard after successful signup
     } catch (error: any) {
