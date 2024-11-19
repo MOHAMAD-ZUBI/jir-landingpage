@@ -17,23 +17,36 @@ import { Job, Rule } from "../../../../../../types";
 
 export default function CreateJob({
   onOpenRuleModal,
+  initialData,
+  isEditing = false,
+  onSuccess,
 }: {
   onOpenRuleModal: () => void;
+  initialData?: Job;
+  isEditing?: boolean;
+  onSuccess?: () => void;
 }) {
-  const [formData, setFormData] = useState<Job>({
-    name: "",
-
-    rules: [
-      {
-        rule: 0,
-        id: 0,
-        name: "",
-        index: 0,
-        continue_if_failed: false,
-        params: [{ name: "", value: "" }],
-      },
-    ],
-  });
+  const [formData, setFormData] = useState<Job>(
+    initialData || {
+      name: "",
+      id: 0,
+      is_active: true,
+      shared_w_groups: false,
+      type: 1,
+      user: 0,
+      groups: [],
+      rules: [
+        {
+          rule: 0,
+          id: 0,
+          name: "",
+          index: 0,
+          continue_if_failed: false,
+          params: [{ name: "", value: "" }],
+        },
+      ],
+    }
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [Rules, setRules] = useState<Rule[]>([]);
@@ -129,18 +142,27 @@ export default function CreateJob({
     setError("");
 
     try {
-      await client.post("/v2/api/shortcuts/", formData);
-      // Optional: Add success handling
-      toast.promise(
-        new Promise((resolve) => setTimeout(resolve, 1500)), // Simulate API call
-        {
-          loading: "Creating job...",
-          success: "Job created successfully!",
-          error: "Failed to create job.",
-        }
-      );
+      if (isEditing) {
+        await client.put(`/v2/api/shortcuts/${initialData?.id}/`, formData);
+      } else {
+        await client.post("/v2/api/shortcuts/", formData);
+      }
+
+      await toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
+        loading: isEditing ? "Updating job..." : "Creating job...",
+        success: isEditing
+          ? "Job updated successfully!"
+          : "Job created successfully!",
+        error: isEditing ? "Failed to update job." : "Failed to create job.",
+      });
+
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (err: any) {
-      toast.error("Failed to create job.");
+      toast.error(
+        isEditing ? "Failed to update job." : "Failed to create job."
+      );
       setError(err.message || "Failed to create job");
     } finally {
       setLoading(false);
@@ -174,13 +196,13 @@ export default function CreateJob({
           required
         />
 
-        {formData.rules.map((rule, ruleIndex) => (
+        {formData.rules?.map((rule, ruleIndex) => (
           <Card key={ruleIndex} className="p-2">
             <CardBody className="space-y-4">
               <div className="flex justify-between items-center gap-4">
                 <Select
                   label="Rule"
-                  value={rule.rule.toString()}
+                  selectedKeys={[rule.rule.toString()]}
                   onChange={(e) =>
                     handleRuleChange(
                       ruleIndex,
@@ -189,8 +211,9 @@ export default function CreateJob({
                     )
                   }
                   className="flex-1"
+                  defaultSelectedKeys={[rule.rule.toString()]}
                 >
-                  {Rules.map((rule) => (
+                  {Rules?.map((rule) => (
                     <SelectItem key={rule.id} value={rule.id.toString()}>
                       {rule.name}
                     </SelectItem>
@@ -241,7 +264,7 @@ export default function CreateJob({
                 </div>
               </div>
 
-              {rule.params.map((param, paramIndex) => (
+              {rule.params?.map((param, paramIndex) => (
                 <div key={paramIndex} className="flex gap-4">
                   <Input
                     label="Parameter Name"
@@ -322,7 +345,7 @@ export default function CreateJob({
           isLoading={loading}
           className="w-full"
         >
-          Create Job
+          {isEditing ? "Update Job" : "Create Job"}
         </Button>
       </div>
     </form>

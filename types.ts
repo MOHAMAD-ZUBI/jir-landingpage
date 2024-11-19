@@ -14,6 +14,12 @@ export type Param = {
 
 export type Job = {
   name: string;
+  is_active: boolean;
+  shared_w_groups: boolean;
+  type: number;
+  id: number;
+  user: number;
+  groups: number[];
   rules: {
     rule: number;
     id: number;

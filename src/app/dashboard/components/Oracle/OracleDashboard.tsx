@@ -10,6 +10,7 @@ import {
   ModalBody,
   useDisclosure,
   Divider,
+  Switch,
 } from "@nextui-org/react";
 import { HiMiniQueueList } from "react-icons/hi2";
 import { TbStatusChange } from "react-icons/tb";
@@ -22,6 +23,7 @@ import { SiEventstore } from "react-icons/si";
 import AddRule from "./Actions/AddRule";
 import { FaRegFileAlt } from "react-icons/fa";
 import Logs from "./Logs";
+import ErrorBoundary from "./Errors/ErrorBoundary";
 type Props = {};
 
 const OracleDashboard = (props: Props) => {
@@ -57,23 +59,6 @@ const OracleDashboard = (props: Props) => {
     },
   ];
 
-  const automatedJobs: AutomatedJob[] = [
-    {
-      title: "Job 1",
-      description: "Job 1 Description",
-      createdAt: "11/14/2024 12:00 PM",
-    },
-    {
-      title: "Job 2",
-      description: "Job 2 Description",
-      createdAt: "11/14/2024 12:00 PM",
-    },
-    {
-      title: "Job 3",
-      description: "Job 3 Description",
-      createdAt: "11/14/2024 12:00 PM",
-    },
-  ];
   const handleOpenModal = (type: "job" | "checker" | "rule") => {
     setModalType(type);
     onOpen();
@@ -110,12 +95,22 @@ const OracleDashboard = (props: Props) => {
       <div className="flex flex-col gap-6 w-full">
         {/* Header Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
-          <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
-            <HiMiniQueueList /> <span>Oracle Dashboard</span>
-          </h2>
-          <p className="text-sm text-gray-500">
-            Monitor and manage your automated tasks
-          </p>
+          <div className="flex flex-row justify-between items-center">
+            <div>
+              <h2 className="text-2xl max-md:text-lg font-semibold md:font-bold flex items-center gap-2">
+                <HiMiniQueueList /> <span>Oracle Dashboard</span>
+              </h2>
+              <p className="text-sm max-md:text-xs text-gray-500">
+                Monitor and manage your automated tasks
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Switch />
+              <p className="text-sm max-md:text-xs text-gray-500">
+                Enable/Disable Live Environment
+              </p>
+            </div>
+          </div>
         </div>
         {/* Widgets Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
@@ -145,12 +140,14 @@ const OracleDashboard = (props: Props) => {
           <p className="text-sm text-gray-500">
             View and manage your automated jobs
           </p>
-          <AutomatedJobs automatedJobs={automatedJobs} />
+          <AutomatedJobs />
         </div>
 
         {/* Logs Section */}
 
-        <Logs />
+        <ErrorBoundary>
+          <Logs />
+        </ErrorBoundary>
       </div>
 
       <Modal

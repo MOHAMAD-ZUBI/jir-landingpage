@@ -11,11 +11,7 @@ export interface AutomatedJob {
   createdAt: string;
 }
 
-const AutomatedJobs = ({
-  automatedJobs,
-}: {
-  automatedJobs: AutomatedJob[];
-}) => {
+const AutomatedJobs = ({}) => {
   const [jobs, setJobs] = useState([]);
 
   const fetchJobs = async () => {
@@ -34,10 +30,14 @@ const AutomatedJobs = ({
         {jobs?.map((job, index) => (
           <CustomCard
             job={{
+              id: job.id,
               title: job.name,
+              name: job.name,
               status: job.is_active,
               sharedWGroups: job.shared_w_groups,
+              rules: job.rules || [],
             }}
+            onUpdate={fetchJobs}
             key={index}
           />
         ))}
