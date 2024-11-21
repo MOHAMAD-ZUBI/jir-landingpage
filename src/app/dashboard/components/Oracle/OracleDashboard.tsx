@@ -23,7 +23,7 @@ import { SiEventstore } from "react-icons/si";
 import AddRule from "./Actions/AddRule";
 import { FaRegFileAlt } from "react-icons/fa";
 import Logs from "./Logs";
-import ErrorBoundary from "./Errors/ErrorBoundary";
+
 type Props = {};
 
 const OracleDashboard = (props: Props) => {
@@ -145,9 +145,7 @@ const OracleDashboard = (props: Props) => {
 
         {/* Logs Section */}
 
-        <ErrorBoundary>
-          <Logs />
-        </ErrorBoundary>
+        <Logs />
       </div>
 
       <Modal
