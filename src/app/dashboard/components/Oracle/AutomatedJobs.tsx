@@ -4,7 +4,7 @@ import { HiMiniQueueList } from "react-icons/hi2";
 import CustomCard from "../Reusable/CustomCard";
 import client from "@/utils/client";
 import { Job } from "../../../../../types";
-import { Pagination } from "@nextui-org/react";
+import { Pagination, Input } from "@nextui-org/react";
 
 export interface AutomatedJob {
   title: string;
@@ -15,6 +15,7 @@ export interface AutomatedJob {
 const AutomatedJobs = ({}) => {
   const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 9;
 
   const fetchJobs = async () => {
@@ -26,15 +27,34 @@ const AutomatedJobs = ({}) => {
     fetchJobs();
   }, []);
 
-  const totalPages = Math.ceil(jobs.length / itemsPerPage);
-  const currentJobs = jobs.slice(
+  const filteredJobs = jobs.filter((job) => {
+    const searchTerm = searchQuery.toLowerCase();
+    return (
+      job.id?.toString().includes(searchTerm) ||
+      job.name?.toLowerCase().includes(searchTerm)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+  const currentJobs = filteredJobs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   console.log({ jobs });
   return (
     <div className="flex flex-col gap-4 mt-2">
+      <Input
+        type="text"
+        placeholder="Search by job ID or name..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="max-w-xs"
+      />
       <div className=" flex   flex-wrap gap-4 w-full">
         {currentJobs?.map((job, index) => (
           <CustomCard

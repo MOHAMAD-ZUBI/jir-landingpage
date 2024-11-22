@@ -8,11 +8,15 @@ import {
   Suspense,
 } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import client from "@/utils/client";
 
 export type Workspace = {
-  id: string;
-  name: string;
-  type: "oracle" | "odoo" | "ai_agent";
+  id: number;
+  email: string;
+  platform: number;
+  url_1: string;
+  url_2: string;
+  user: number;
 };
 
 type WorkspaceContextType = {
@@ -20,12 +24,6 @@ type WorkspaceContextType = {
   setCurrentWorkspace: (workspace: Workspace) => void;
   workspaces: Workspace[];
 };
-
-const defaultWorkspaces: Workspace[] = [
-  { id: "1", name: "Oracle Hyperion", type: "oracle" },
-  { id: "2", name: "Odoo", type: "odoo" },
-  { id: "3", name: "AI Agent", type: "ai_agent" },
-];
 
 export const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
   undefined
@@ -54,28 +52,37 @@ function WorkspaceContent({
   router: ReturnType<typeof useRouter>;
 }) {
   const searchParams = useSearchParams();
-
-  // Initialize with a loading state
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(
     null
   );
 
   useEffect(() => {
-    const workspaceId = searchParams.get("workspace");
-    const workspace = workspaceId
-      ? defaultWorkspaces.find((w) => w.id === workspaceId)
-      : defaultWorkspaces[0];
+    async function fetchWorkspaces() {
+      try {
+        const { data } = await client.get<Workspace[]>("/v2/api/platforms/");
+        setWorkspaces(data);
 
-    setCurrentWorkspace(workspace || defaultWorkspaces[0]);
+        const workspaceId = searchParams.get("workspace");
+        const workspace = workspaceId
+          ? data.find((w) => w.id.toString() === workspaceId)
+          : data[0];
+
+        setCurrentWorkspace(workspace || data[0]);
+      } catch (error) {
+        console.error("Failed to fetch workspaces:", error);
+      }
+    }
+
+    fetchWorkspaces();
   }, [searchParams]);
 
   const handleWorkspaceChange = (workspace: Workspace) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("workspace", workspace.id);
+    params.set("workspace", workspace.id.toString());
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  // Don't render children until we have a workspace
   if (!currentWorkspace) {
     return null;
   }
@@ -85,7 +92,7 @@ function WorkspaceContent({
       value={{
         currentWorkspace,
         setCurrentWorkspace: handleWorkspaceChange,
-        workspaces: defaultWorkspaces,
+        workspaces,
       }}
     >
       {children}

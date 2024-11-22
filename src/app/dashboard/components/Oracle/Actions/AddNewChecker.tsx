@@ -15,7 +15,7 @@ import { IoAdd } from "react-icons/io5";
 import { FaTrash } from "react-icons/fa";
 
 interface Intersection {
-  op: "add" | "subtract" | "none";
+  op: "add" | "sub" | "none";
   intersection_json: {
     [key: string]: string | number;
   };
@@ -23,7 +23,7 @@ interface Intersection {
 
 const operationOptions = [
   { label: "Add", value: "add" },
-  { label: "Subtract", value: "subtract" },
+  { label: "Subtract", value: "sub" },
   { label: "None", value: "none" },
 ];
 
@@ -36,7 +36,7 @@ const AddNewChecker = () => {
       {
         op: "add" as const,
         intersection_json: {},
-        dimensions: [{ key: "", value: "" }],
+        dimensions: JSON.stringify([{ key: "", value: "" }]),
       },
     ],
   });
@@ -51,7 +51,7 @@ const AddNewChecker = () => {
         {
           op: "add",
           intersection_json: {},
-          dimensions: [{ key: "", value: "" }],
+          dimensions: JSON.stringify([{ key: "", value: "" }]),
         },
       ],
     });
@@ -67,7 +67,11 @@ const AddNewChecker = () => {
 
   const addDimension = (intersectionIndex: number) => {
     const newIntersections = [...formData.intersections];
-    newIntersections[intersectionIndex].dimensions.push({ key: "", value: "" });
+    const dimensions = JSON.parse(
+      newIntersections[intersectionIndex].dimensions
+    );
+    dimensions.push({ key: "", value: "" });
+    newIntersections[intersectionIndex].dimensions = JSON.stringify(dimensions);
     setFormData({ ...formData, intersections: newIntersections });
   };
 
@@ -76,10 +80,14 @@ const AddNewChecker = () => {
     dimensionIndex: number
   ) => {
     const newIntersections = [...formData.intersections];
-    if (newIntersections[intersectionIndex].dimensions.length === 1) return;
-    newIntersections[intersectionIndex].dimensions = newIntersections[
-      intersectionIndex
-    ].dimensions.filter((_, i) => i !== dimensionIndex);
+    const dimensions = JSON.parse(
+      newIntersections[intersectionIndex].dimensions
+    );
+    if (dimensions.length === 1) return;
+
+    const newDimensions = dimensions.filter((_, i) => i !== dimensionIndex);
+    newIntersections[intersectionIndex].dimensions =
+      JSON.stringify(newDimensions);
     setFormData({ ...formData, intersections: newIntersections });
   };
 
@@ -93,17 +101,13 @@ const AddNewChecker = () => {
     if (field === "op") {
       newIntersections[intersectionIndex].op = value;
     } else {
-      newIntersections[intersectionIndex].dimensions[dimensionIndex!][field] =
-        value;
-      newIntersections[intersectionIndex].intersection_json = newIntersections[
-        intersectionIndex
-      ].dimensions.reduce(
-        (acc, dim) => ({
-          ...acc,
-          [dim.key]: isNaN(Number(dim.value)) ? dim.value : Number(dim.value),
-        }),
-        {}
+      const dimensions = JSON.parse(
+        newIntersections[intersectionIndex].dimensions
       );
+      dimensions[dimensionIndex][field] = value;
+      newIntersections[intersectionIndex].dimensions =
+        JSON.stringify(dimensions);
+      newIntersections[intersectionIndex].intersection_json = dimensions;
     }
     setFormData({ ...formData, intersections: newIntersections });
   };
@@ -118,7 +122,7 @@ const AddNewChecker = () => {
         comparison_val: Number(formData.comparison_val),
         intersections: formData.intersections.map((intersection) => ({
           op: intersection.op,
-          intersection_json: intersection.intersection_json,
+          intersection_json: JSON.parse(intersection.dimensions),
         })),
       };
 
@@ -133,7 +137,7 @@ const AddNewChecker = () => {
           {
             op: "add",
             intersection_json: {},
-            dimensions: [{ key: "", value: "" }],
+            dimensions: JSON.stringify([{ key: "", value: "" }]),
           },
         ],
       });
@@ -231,69 +235,75 @@ const AddNewChecker = () => {
                     <FaTrash className="h-4 w-4" />
                   </Button>
                 </div>
-
-                {intersection.dimensions.map((dimension, dimensionIndex) => (
-                  <div key={dimensionIndex} className="grid grid-cols-9 gap-4">
-                    <div className="col-span-4">
-                      <Input
-                        label="Dimension Key"
-                        placeholder="Enter key"
-                        value={dimension.key}
-                        onChange={(e) =>
-                          updateIntersection(
-                            intersectionIndex,
-                            "key",
-                            e.target.value,
-                            dimensionIndex
-                          )
-                        }
-                        isRequired
-                      />
-                    </div>
-                    <div className="col-span-4">
-                      <Input
-                        label="Value"
-                        placeholder="Enter value."
-                        value={dimension.value}
-                        onChange={(e) =>
-                          updateIntersection(
-                            intersectionIndex,
-                            "value",
-                            e.target.value,
-                            dimensionIndex
-                          )
-                        }
-                        isRequired
-                      />
-                    </div>
-                    <div className="col-span-1 flex items-end justify-center">
-                      <Button
-                        isIconOnly
-                        color="danger"
-                        variant="light"
-                        onClick={() =>
-                          removeDimension(intersectionIndex, dimensionIndex)
-                        }
-                        disabled={intersection.dimensions.length === 1}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-5 h-5"
+                {JSON.parse(intersection.dimensions).map(
+                  (dimension, dimensionIndex) => (
+                    <div
+                      key={dimensionIndex}
+                      className="grid grid-cols-9 gap-4"
+                    >
+                      <div className="col-span-4">
+                        <Input
+                          label="Dimension Key"
+                          placeholder="Enter key"
+                          value={dimension.key}
+                          onChange={(e) =>
+                            updateIntersection(
+                              intersectionIndex,
+                              "key",
+                              e.target.value,
+                              dimensionIndex
+                            )
+                          }
+                          isRequired
+                        />
+                      </div>
+                      <div className="col-span-4">
+                        <Input
+                          label="Value"
+                          placeholder="Enter value"
+                          value={dimension.value}
+                          onChange={(e) =>
+                            updateIntersection(
+                              intersectionIndex,
+                              "value",
+                              e.target.value,
+                              dimensionIndex
+                            )
+                          }
+                          isRequired
+                        />
+                      </div>
+                      <div className="col-span-1 flex items-end justify-center">
+                        <Button
+                          isIconOnly
+                          color="danger"
+                          variant="light"
+                          onClick={() =>
+                            removeDimension(intersectionIndex, dimensionIndex)
+                          }
+                          disabled={
+                            JSON.parse(intersection.dimensions).length === 1
+                          }
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18 18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </Button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18 18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
 
                 <Button
                   size="sm"

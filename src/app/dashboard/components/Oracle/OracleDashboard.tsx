@@ -22,6 +22,7 @@ import { MdOutlinePendingActions } from "react-icons/md";
 import { SiEventstore } from "react-icons/si";
 import AddRule from "./Actions/AddRule";
 import { FaRegFileAlt } from "react-icons/fa";
+import { useWorkspace, Workspace } from "@/context/WorkspaceContext";
 import Logs from "./Logs";
 
 type Props = {};
@@ -31,33 +32,6 @@ const OracleDashboard = (props: Props) => {
   const [modalType, setModalType] = React.useState<
     "job" | "checker" | "rule" | null
   >(null);
-
-  const checkers = [
-    {
-      name: "Checker 1",
-      comparison_val: 990283823,
-      real_val: 990283823,
-      intersections: [],
-    },
-    {
-      name: "Checker 2",
-      comparison_val: 990283823,
-      real_val: 990283823,
-      intersections: [],
-    },
-    {
-      name: "Checker 3",
-      comparison_val: 990283823,
-      real_val: 990283823,
-      intersections: [],
-    },
-    {
-      name: "Checker 4",
-      comparison_val: 990283823,
-      real_val: 990283823,
-      intersections: [],
-    },
-  ];
 
   const handleOpenModal = (type: "job" | "checker" | "rule") => {
     setModalType(type);
@@ -90,6 +64,8 @@ const OracleDashboard = (props: Props) => {
     }
   };
 
+  console.log({ useWorkspace });
+
   return (
     <div className="w-full max-w-[1500px] mx-auto">
       <div className="flex flex-col gap-6 w-full">
@@ -107,7 +83,7 @@ const OracleDashboard = (props: Props) => {
             <div className="flex flex-col items-center gap-2">
               <Switch />
               <p className="text-sm max-md:text-xs text-gray-500">
-                Enable/Disable Live Environment
+                Test Environment
               </p>
             </div>
           </div>

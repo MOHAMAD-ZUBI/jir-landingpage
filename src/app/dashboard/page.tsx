@@ -7,18 +7,20 @@ import TıtleHeading from "./components/Reusable/TıtleHeading";
 const DashboardPage = () => {
   const { currentWorkspace } = useWorkspace();
 
+  console.log({ currentWorkspace });
+
   const renderWorkspaceContent = () => {
-    switch (currentWorkspace.type) {
-      case "oracle":
+    switch (currentWorkspace.platform) {
+      case 1: // Oracle
         return (
-          <div className="w-full ">
+          <div className="w-full">
             <div className="w-full">
               <OracleDashboard />
             </div>
           </div>
         );
 
-      case "odoo":
+      case 2: // Odoo
         return (
           <div>
             <TıtleHeading title="Odoo" subheading="Odoo Dashboard" />
@@ -32,7 +34,7 @@ const DashboardPage = () => {
           </div>
         );
 
-      case "ai_agent":
+      case 3: // AI Agent
         return (
           <div>
             <TıtleHeading title="AI Agent" subheading="AI Agent Dashboard" />
