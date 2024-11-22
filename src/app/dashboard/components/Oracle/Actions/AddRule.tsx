@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import client from "@/utils/client";
-import { Input, Textarea, Button } from "@nextui-org/react";
+import { Input, Textarea, Button, Select, SelectItem } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";
 import { Rule } from "../../../../../../types";
 
@@ -20,23 +20,36 @@ const AddRule = ({ onSuccess }: Props) => {
   const [error, setError] = useState("");
 
   const ruleTypes = [
-    { name: "", id: 1 },
     {
-      name: "Group",
-      id: 2,
+      value: 1,
+      display_name: "DATA_RULE",
     },
     {
-      name: "User",
-      id: 3,
+      value: 2,
+      display_name: "BUS_RULE",
     },
     {
-      name: "Role",
-      id: 4,
+      value: 3,
+      display_name: "JOB",
+    },
+    {
+      value: 4,
+      display_name: "OTHER",
+    },
+    {
+      value: 5,
+      display_name: "PIPE_LINE",
+    },
+    {
+      value: 6,
+      display_name: "PY_FUNC",
     },
   ];
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({
       ...formData,
@@ -85,6 +98,20 @@ const AddRule = ({ onSuccess }: Props) => {
         onChange={handleChange}
         className="flex-1"
       />
+
+      <Select
+        id="type"
+        name="type"
+        label="Type"
+        value={formData.type}
+        onChange={handleChange}
+      >
+        {ruleTypes.map((type) => (
+          <SelectItem key={type.value} value={type.value}>
+            {type.display_name}
+          </SelectItem>
+        ))}
+      </Select>
 
       <Textarea
         id="rule"
