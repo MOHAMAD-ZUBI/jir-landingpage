@@ -22,6 +22,8 @@ const WidgetCarousel = () => {
 
   const fetchCheckers = async () => {
     try {
+      await client.post("/v2/api/force_checker/");
+
       const { data } = await client.get("/v2/api/newchecker/");
       const validatedData = data.map((checker: Checker) => ({
         ...checker,
