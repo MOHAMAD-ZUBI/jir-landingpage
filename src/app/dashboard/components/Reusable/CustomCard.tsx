@@ -12,8 +12,12 @@ import {
   useDisclosure,
   Button,
 } from "@nextui-org/react";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaPlay } from "react-icons/fa";
 import CreateJob from "../Oracle/Actions/AddNestedJob";
+import client from "@/utils/client";
+import toast, { Toaster } from "react-hot-toast";
+import { MdOutlineReplay } from "react-icons/md";
+import { useState } from "react";
 
 interface JobCard {
   id: number;
@@ -43,42 +47,105 @@ export default function App({
   onUpdate: () => void;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
     onUpdate();
     onClose();
   };
 
+  const handleTriggerJob = async () => {
+    setIsLoading(true);
+    try {
+      await client.post(
+        "/v2/api/run_shortcut/",
+        { id: Number(job.id) },
+        { headers: { LIVE: 0 } }
+      );
+
+      await toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
+        loading: "Triggering job...",
+        success: "Job triggered successfully!",
+        error: "Failed to trigger job.",
+      });
+    } catch (error) {
+      toast.error("Failed to trigger job.");
+      console.error("Error triggering job:", error);
+      console.log("Full error:", {
+        status: error.response?.status,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        payload: { id: job.id },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
-      <Card className="max-w-[400px] bg-gradient-to-tl w-full from-gray-600 via-slate-800 to-slate-500 text-white">
-        <CardHeader className="flex gap-3">
+      <Toaster position="top-right" />
+      <Card className="max-w-[400px] w-full hover:scale-[1.02] transition-transform duration-200 shadow-lg bg-gradient-to-br from-slate-800 to-slate-900 text-white border border-slate-700">
+        <CardHeader className="flex gap-3 pb-2">
           <div className="flex flex-col w-full">
             <div className="flex flex-row justify-between items-center">
-              <p className="text-lg font-semibold">{job.title}</p>
-              <Button
-                isIconOnly
-                className="bg-transparent"
-                size="sm"
-                onClick={onOpen}
-              >
-                <FaRegEdit className="text-white" size={20} />
-              </Button>
+              <p className="text-xl font-bold tracking-wide">{job.title}</p>
+              <div className="flex gap-2">
+                <Button
+                  isIconOnly
+                  className="bg-slate-700/50 hover:bg-slate-600/50 transition-colors"
+                  size="sm"
+                  onClick={handleTriggerJob}
+                  isDisabled={isLoading}
+                >
+                  <MdOutlineReplay
+                    className={`text-white ${isLoading ? "animate-spin" : ""}`}
+                    size={20}
+                  />
+                </Button>
+                <Button
+                  isIconOnly
+                  className="bg-slate-700/50 hover:bg-slate-600/50 transition-colors"
+                  size="sm"
+                  onClick={onOpen}
+                >
+                  <FaRegEdit className="text-white" size={16} />
+                </Button>
+              </div>
             </div>
-            <p className="text-small text-gray-100">
-              Shared: {job.sharedWGroups ? "Yes" : "No"}
+            <p className="text-small text-gray-300 flex items-center gap-2">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  job.sharedWGroups ? "bg-green-400" : "bg-yellow-400"
+                }`}
+              ></span>
+              {job.sharedWGroups ? "Shared" : "Private"}
+            </p>
+            <p className="text-xs text-gray-300">
+              {job.sharedWGroups
+                ? "Job is shared with group"
+                : "Job is not shared with group"}
             </p>
           </div>
         </CardHeader>
-        <Divider />
-        <CardBody>
-          <p>Status: {job.status ? "Active" : "Inactive"}</p>
+        <Divider className="bg-slate-700/50" />
+        <CardBody className="py-3">
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                job.status ? "bg-green-400" : "bg-red-400"
+              }`}
+            ></span>
+            <p className="text-gray-300">
+              {job.status ? "Active" : "Inactive"}
+            </p>
+          </div>
         </CardBody>
-        <Divider />
+        <Divider className="bg-slate-700/50" />
       </Card>
 
       <Modal size="4xl" isOpen={isOpen} onClose={handleClose}>
-        <ModalContent>
+        <ModalContent className="max-h-[80vh] overflow-y-auto">
           <ModalHeader>Edit Job</ModalHeader>
           <ModalBody>
             <CreateJob

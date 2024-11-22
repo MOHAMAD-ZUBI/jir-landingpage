@@ -153,7 +153,12 @@ const Logs: React.FC = () => {
         },
       };
 
-      const config = statusConfig[item.status as keyof typeof statusConfig];
+      const config = statusConfig[item.status as keyof typeof statusConfig] || {
+        color: "default",
+        icon: <FaTimesCircle className="text-lg" />,
+        text: "Unknown",
+      };
+
       return (
         <Chip
           startContent={config.icon}
@@ -220,7 +225,10 @@ const Logs: React.FC = () => {
           >
             <TableHeader columns={columns}>
               {(column) => (
-                <TableColumn key={column.key} className={column.className}>
+                <TableColumn
+                  key={column.key}
+                  className={column.className || ""}
+                >
                   {column.label}
                 </TableColumn>
               )}
@@ -232,7 +240,12 @@ const Logs: React.FC = () => {
               {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) => (
-                    <TableCell>
+                    <TableCell
+                      className={
+                        columns.find((col) => col.key === columnKey)
+                          ?.className || ""
+                      }
+                    >
                       {renderCell(
                         item,
                         columnKey as keyof LogEntry | "actions"
