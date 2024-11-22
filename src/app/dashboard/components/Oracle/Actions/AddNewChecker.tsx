@@ -107,7 +107,14 @@ const AddNewChecker = () => {
       dimensions[dimensionIndex][field] = value;
       newIntersections[intersectionIndex].dimensions =
         JSON.stringify(dimensions);
-      newIntersections[intersectionIndex].intersection_json = dimensions;
+
+      const formattedJson = {};
+      dimensions.forEach((dim) => {
+        if (dim.key && dim.value) {
+          formattedJson[dim.key] = dim.value;
+        }
+      });
+      newIntersections[intersectionIndex].intersection_json = formattedJson;
     }
     setFormData({ ...formData, intersections: newIntersections });
   };
@@ -122,7 +129,7 @@ const AddNewChecker = () => {
         comparison_val: Number(formData.comparison_val),
         intersections: formData.intersections.map((intersection) => ({
           op: intersection.op,
-          intersection_json: JSON.parse(intersection.dimensions),
+          intersection_json: intersection.intersection_json,
         })),
       };
 

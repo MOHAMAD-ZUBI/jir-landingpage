@@ -18,6 +18,7 @@ import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
 import { MdOutlineReplay } from "react-icons/md";
 import { useState } from "react";
+import { useEnvironment } from "@/context/EnvironmentContext";
 
 interface JobCard {
   id: number;
@@ -48,6 +49,7 @@ export default function App({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
+  const { environment } = useEnvironment();
 
   const handleClose = () => {
     onUpdate();
@@ -60,7 +62,7 @@ export default function App({
       await client.post(
         "/v2/api/run_shortcut/",
         { id: Number(job.id) },
-        { headers: { LIVE: 0 } }
+        { headers: { LIVE: environment } }
       );
 
       await toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {

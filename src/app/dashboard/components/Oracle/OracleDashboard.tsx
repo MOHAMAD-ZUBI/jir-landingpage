@@ -23,12 +23,14 @@ import { SiEventstore } from "react-icons/si";
 import AddRule from "./Actions/AddRule";
 import { FaRegFileAlt } from "react-icons/fa";
 import { useWorkspace, Workspace } from "@/context/WorkspaceContext";
+import { useEnvironment } from "@/context/EnvironmentContext";
 import Logs from "./Logs";
 
 type Props = {};
 
 const OracleDashboard = (props: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const { environment, setEnvironment } = useEnvironment();
   const [modalType, setModalType] = React.useState<
     "job" | "checker" | "rule" | null
   >(null);
@@ -65,6 +67,7 @@ const OracleDashboard = (props: Props) => {
   };
 
   console.log({ useWorkspace });
+  console.log({ environment });
 
   return (
     <div className="w-full max-w-[1500px] mx-auto">
@@ -81,7 +84,12 @@ const OracleDashboard = (props: Props) => {
               </p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <Switch />
+              <Switch
+                isSelected={environment === 1}
+                onValueChange={(isSelected) =>
+                  setEnvironment(isSelected ? 1 : 0)
+                }
+              />
               <p className="text-sm max-md:text-xs text-gray-500">
                 Test Environment
               </p>

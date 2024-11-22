@@ -4,23 +4,14 @@ import useEmblaCarousel from "embla-carousel-react";
 import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
 import client from "@/utils/client";
 
-// interface Checker {
-//   id: number;
-//   name: string;
-//   comparison_val: number;
-//   actual_val: number;
-//   shared_w_groups: boolean;
-//   schedule: boolean;
-//   created_at: string;
-// }
-
 interface Checker {
+  id: number;
   name: string;
-  matched: boolean;
-  expected: number;
-  actual: number;
+  comparison_val: number;
+  actual_val: number;
+  shared_w_groups: boolean;
   schedule: boolean;
-  details: string;
+  created_at: string;
 }
 
 const WidgetCarousel = () => {
@@ -31,8 +22,13 @@ const WidgetCarousel = () => {
 
   const fetchCheckers = async () => {
     try {
-      const { data } = await client.get("/v2/api/checker/");
-      setCheckers(data);
+      const { data } = await client.get("/v2/api/newchecker/");
+      const validatedData = data.map((checker: Checker) => ({
+        ...checker,
+        actual_val: checker.actual_val ?? 0,
+        comparison_val: checker.comparison_val ?? 0,
+      }));
+      setCheckers(validatedData);
     } catch (error) {
       console.error("Error fetching checkers:", error);
     }
@@ -64,9 +60,11 @@ const WidgetCarousel = () => {
         <div className="flex">
           {checkers?.map((checker, index) => (
             <div
-              key={index}
+              key={checker.id}
               className={`flex-shrink-0 m-6 relative overflow-hidden ${
-                checker.matched ? "bg-green-500" : "bg-red-500"
+                checker.actual_val === checker.comparison_val
+                  ? "bg-green-500"
+                  : "bg-red-500"
               } rounded-lg md:max-w-xl max-w-sm w-full shadow-lg`}
             >
               <svg
@@ -114,25 +112,27 @@ const WidgetCarousel = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Actual:</span>
                     <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
-                      ${checker.actual.toLocaleString()}
+                      ${(checker.actual_val ?? 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expected:</span>
                     <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
-                      ${checker.expected.toLocaleString()}
+                      ${(checker.comparison_val ?? 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Status:</span>
                     <span
                       className={`block rounded-full text-xs font-bold px-3 py-2 leading-none ${
-                        checker.matched
+                        checker.actual_val === checker.comparison_val
                           ? "bg-green-200 text-green-700"
                           : "bg-red-200 text-red-700"
                       }`}
                     >
-                      {checker.matched ? "Matched" : "Not Matched"}
+                      {checker.actual_val === checker.comparison_val
+                        ? "Matched"
+                        : "Not Matched"}
                     </span>
                   </div>
                 </div>
