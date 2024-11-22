@@ -118,7 +118,7 @@ const OracleDashboard = (props: Props) => {
             <TbStatusChange /> <span>Checker Status</span>
           </h2>
 
-          <WidgetCarousel checkers={checkers} />
+          <WidgetCarousel />
         </div>
 
         {/* Actions Section */}

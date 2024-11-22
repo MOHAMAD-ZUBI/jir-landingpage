@@ -1,16 +1,46 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
-import Widget from "./Widget";
-import { Checker } from "../../../../../types";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
-import { Chip } from "@nextui-org/react";
+import client from "@/utils/client";
 
-const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
+// interface Checker {
+//   id: number;
+//   name: string;
+//   comparison_val: number;
+//   actual_val: number;
+//   shared_w_groups: boolean;
+//   schedule: boolean;
+//   created_at: string;
+// }
+
+interface Checker {
+  name: string;
+  matched: boolean;
+  expected: number;
+  actual: number;
+  schedule: boolean;
+  details: string;
+}
+
+const WidgetCarousel = () => {
+  const [checkers, setCheckers] = useState<Checker[]>([]);
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start" });
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(true);
+
+  const fetchCheckers = async () => {
+    try {
+      const { data } = await client.get("/v2/api/newchecker/");
+      setCheckers(data);
+    } catch (error) {
+      console.error("Error fetching checkers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCheckers();
+  }, []);
 
   React.useEffect(() => {
     if (!emblaApi) return;
@@ -31,11 +61,13 @@ const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
   return (
     <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex ">
+        <div className="flex">
           {checkers?.map((checker, index) => (
             <div
               key={index}
-              className="flex-shrink-0 m-6 relative overflow-hidden bg-blue-500 rounded-lg md:max-w-xl max-w-sm w-full shadow-lg"
+              className={`flex-shrink-0 m-6 relative overflow-hidden ${
+                checker.matched ? "bg-green-500" : "bg-red-500"
+              } rounded-lg md:max-w-xl max-w-sm w-full shadow-lg`}
             >
               <svg
                 className="absolute bottom-0 left-0 mb-8"
@@ -76,19 +108,31 @@ const WidgetCarousel = ({ checkers }: { checkers: Checker[] }) => {
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <span className="block font-semibold text-xl">
-                      {checker.name || "Unnamed Checker"}
+                      {checker.name}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Actual:</span>
                     <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
-                      ${checker.real_val}
+                      ${checker.actual.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expected:</span>
                     <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
-                      ${checker.comparison_val}
+                      ${checker.expected.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Status:</span>
+                    <span
+                      className={`block rounded-full text-xs font-bold px-3 py-2 leading-none ${
+                        checker.matched
+                          ? "bg-green-200 text-green-700"
+                          : "bg-red-200 text-red-700"
+                      }`}
+                    >
+                      {checker.matched ? "Matched" : "Not Matched"}
                     </span>
                   </div>
                 </div>

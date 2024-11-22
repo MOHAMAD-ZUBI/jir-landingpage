@@ -4,6 +4,7 @@ import { HiMiniQueueList } from "react-icons/hi2";
 import CustomCard from "../Reusable/CustomCard";
 import client from "@/utils/client";
 import { Job } from "../../../../../types";
+import { Pagination } from "@nextui-org/react";
 
 export interface AutomatedJob {
   title: string;
@@ -13,6 +14,8 @@ export interface AutomatedJob {
 
 const AutomatedJobs = ({}) => {
   const [jobs, setJobs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   const fetchJobs = async () => {
     const { data } = await client.get("/v2/api/shortcuts/");
@@ -23,11 +26,17 @@ const AutomatedJobs = ({}) => {
     fetchJobs();
   }, []);
 
+  const totalPages = Math.ceil(jobs.length / itemsPerPage);
+  const currentJobs = jobs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   console.log({ jobs });
   return (
     <div className="flex flex-col gap-4 mt-2">
       <div className=" flex   flex-wrap gap-4 w-full">
-        {jobs?.map((job, index) => (
+        {currentJobs?.map((job, index) => (
           <CustomCard
             job={{
               id: job.id,
@@ -42,6 +51,16 @@ const AutomatedJobs = ({}) => {
           />
         ))}
       </div>
+
+      {jobs.length > itemsPerPage && (
+        <div className="flex justify-center mt-4">
+          <Pagination
+            total={totalPages}
+            page={currentPage}
+            onChange={setCurrentPage}
+          />
+        </div>
+      )}
     </div>
   );
 };
