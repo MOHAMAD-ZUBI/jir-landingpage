@@ -89,16 +89,8 @@ export default function App() {
   };
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    { name: "Login", href: "/auth/signin", color: "foreground" },
+    { name: "Sign Up", href: "/auth/signup", color: "primary" },
   ];
 
   return (
@@ -203,20 +195,22 @@ export default function App() {
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+          <NavbarMenuItem key={`${item.name}-${index}`}>
             <Link
               color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
+                item.color as
+                  | "foreground"
+                  | "primary"
+                  | "secondary"
+                  | "success"
+                  | "warning"
+                  | "danger"
               }
               className="w-full"
-              href="#"
+              href={item.href}
               size="lg"
             >
-              {item}
+              {item.name}
             </Link>
           </NavbarMenuItem>
         ))}

@@ -31,7 +31,7 @@ const WidgetCarousel = () => {
 
   const fetchCheckers = async () => {
     try {
-      const { data } = await client.get("/v2/api/newchecker/");
+      const { data } = await client.get("/v2/api/checker/");
       setCheckers(data);
     } catch (error) {
       console.error("Error fetching checkers:", error);
