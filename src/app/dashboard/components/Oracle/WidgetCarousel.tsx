@@ -22,7 +22,11 @@ const WidgetCarousel = () => {
 
   const fetchCheckers = async () => {
     try {
-      await client.post("/v2/api/force_checker/");
+      try {
+        await client.post("/v2/api/force_checker/");
+      } catch (error) {
+        console.error("Failed to post to /v2/api/force_checker:", error);
+      }
 
       const { data } = await client.get("/v2/api/newchecker/");
       const validatedData = data.map((checker: Checker) => ({
