@@ -7,11 +7,11 @@ import client from "@/utils/client";
 interface Checker {
   id: number;
   name: string;
-  comparison_val: number;
-  actual_val: number;
-  shared_w_groups: boolean;
+  matched: boolean;
+  expected: number;
+  actual: number;
   schedule: boolean;
-  created_at: string;
+  details: string;
 }
 
 const WidgetCarousel = () => {
@@ -28,11 +28,11 @@ const WidgetCarousel = () => {
         console.error("Failed to post to /v2/api/force_checker:", error);
       }
 
-      const { data } = await client.get("/v2/api/newchecker/");
+      const { data } = await client.get("/v2/api/checked/");
       const validatedData = data.map((checker: Checker) => ({
         ...checker,
-        actual_val: checker.actual_val ?? 0,
-        comparison_val: checker.comparison_val ?? 0,
+        actual: checker.actual ?? 0,
+        expected: checker.expected ?? 0,
       }));
       setCheckers(validatedData);
     } catch (error) {
@@ -68,9 +68,7 @@ const WidgetCarousel = () => {
             <div
               key={checker.id}
               className={`flex-shrink-0 m-6 relative overflow-hidden ${
-                checker.actual_val === checker.comparison_val
-                  ? "bg-green-500"
-                  : "bg-red-500"
+                checker.matched ? "bg-green-500" : "bg-red-500"
               } rounded-lg md:max-w-xl max-w-sm w-full shadow-lg`}
             >
               <svg
@@ -118,27 +116,25 @@ const WidgetCarousel = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Actual:</span>
                     <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
-                      ${(checker.actual_val ?? 0).toLocaleString()}
+                      ${(checker.actual ?? 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Expected:</span>
                     <span className="block bg-white rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none">
-                      ${(checker.comparison_val ?? 0).toLocaleString()}
+                      ${(checker.expected ?? 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Status:</span>
                     <span
                       className={`block rounded-full text-xs font-bold px-3 py-2 leading-none ${
-                        checker.actual_val === checker.comparison_val
+                        checker.matched
                           ? "bg-green-200 text-green-700"
                           : "bg-red-200 text-red-700"
                       }`}
                     >
-                      {checker.actual_val === checker.comparison_val
-                        ? "Matched"
-                        : "Not Matched"}
+                      {checker.matched ? "Matched" : "Not Matched"}
                     </span>
                   </div>
                 </div>
