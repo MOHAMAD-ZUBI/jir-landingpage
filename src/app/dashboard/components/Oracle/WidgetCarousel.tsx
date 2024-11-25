@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
 import client from "@/utils/client";
+import { Button } from "@nextui-org/react";
+import { FaEdit } from "react-icons/fa";
+import EditCheckerModal from "./EditCheckerModal";
 
 interface Checker {
   id: number;
@@ -12,6 +15,12 @@ interface Checker {
   actual: number;
   schedule: boolean;
   details: string;
+  intersections?: {
+    op: "add" | "sub" | "none";
+    intersection_json: Record<string, string>;
+  }[];
+  shared_w_groups?: boolean;
+  groups?: any[];
 }
 
 const WidgetCarousel = () => {
@@ -19,6 +28,8 @@ const WidgetCarousel = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start" });
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(true);
+  const [selectedChecker, setSelectedChecker] = useState<Checker | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const fetchCheckers = async () => {
     try {
@@ -59,6 +70,16 @@ const WidgetCarousel = () => {
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
+
+  const handleEditClick = async (checkerId: number) => {
+    try {
+      const { data } = await client.get(`/v2/api/newchecker/${checkerId}`);
+      setSelectedChecker(data);
+      setIsEditModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching checker details:", error);
+    }
+  };
 
   return (
     <div className="relative">
@@ -106,7 +127,18 @@ const WidgetCarousel = () => {
                 ></div>
               </div>
               <div className="relative text-white px-6 pb-6 mt-6">
-                <span className="block opacity-75 -mb-1">Checker Status</span>
+                <div className="flex justify-between items-center">
+                  <span className="block opacity-75 -mb-1">Checker Status</span>
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="bordered"
+                    onClick={() => handleEditClick(checker.id)}
+                    className="text-white hover:bg-white/20 border-white/30 transition-colors"
+                  >
+                    <FaEdit className="w-4 h-4" />
+                  </Button>
+                </div>
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <span className="block font-semibold text-xl">
@@ -143,6 +175,17 @@ const WidgetCarousel = () => {
           ))}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <EditCheckerModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedChecker(null);
+          fetchCheckers(); // Refresh the list after editing
+        }}
+        checker={selectedChecker}
+      />
 
       {/* Navigation Arrows */}
       <button

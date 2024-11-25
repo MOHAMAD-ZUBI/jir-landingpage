@@ -73,7 +73,7 @@ const OracleDashboard = (props: Props) => {
     <div className="w-full max-w-[1500px] mx-auto">
       <div className="flex flex-col gap-6 w-full">
         {/* Header Section */}
-        <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
+        <div className="bg-content1 space-y-4 rounded-lg p-4 shadow-sm w-full">
           <div className="flex flex-row justify-between items-center">
             <div>
               <h2 className="text-2xl max-md:text-lg font-semibold md:font-bold flex items-center gap-2">
@@ -95,6 +95,18 @@ const OracleDashboard = (props: Props) => {
               </p>
             </div>
           </div>
+          <div className="bg-content2/50 rounded-xl p-6 shadow-md w-full border border-content3/20 hover:border-content3/40 transition-colors">
+            <h2 className="text-2xl max-md:text-xl font-semibold flex items-center gap-3 mb-3">
+              <SiEventstore className="text-primary" />
+              <span>Quick Actions</span>
+            </h2>
+            <p className="text-sm text-default-500 mb-4">
+              Add a job, checker or rule to get started
+            </p>
+            <div className="mt-2">
+              <ActionsSection onOpenModal={handleOpenModal} />
+            </div>
+          </div>
         </div>
         {/* Widgets Section */}
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
@@ -105,7 +117,7 @@ const OracleDashboard = (props: Props) => {
           <WidgetCarousel />
         </div>
 
-        {/* Actions Section */}
+        {/* Actions Section
         <div className="bg-content1 rounded-lg p-4 shadow-sm w-full">
           <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
             <SiEventstore /> <span>Actions</span>
@@ -114,7 +126,7 @@ const OracleDashboard = (props: Props) => {
             Add a job, checker or rule to get started
           </p>
           <ActionsSection onOpenModal={handleOpenModal} />
-        </div>
+        </div> */}
 
         {/* Jobs Section */}
         <div className="bg-content1 rounded-lg p-4  shadow-sm w-full">
