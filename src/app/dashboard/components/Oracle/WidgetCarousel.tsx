@@ -45,13 +45,13 @@ const WidgetCarousel = () => {
 
   const fetchCheckers = async () => {
     try {
-      try {
-        await client.post(
-          `/v2/api/platforms/${currentWorkspace?.id}/force_checker/`
-        );
-      } catch (error) {
-        console.error("Failed to post to /v2/api/force_checker:", error);
-      }
+      // try {
+      //   await client.post(
+      //     `/v2/api/platforms/${currentWorkspace?.id}/force_checker/`
+      //   );
+      // } catch (error) {
+      //   console.error("Failed to post to /v2/api/force_checker:", error);
+      // }
 
       const { data } = await client.get(
         `/v2/api/platforms/${currentWorkspace?.id}/checked/`
@@ -120,7 +120,17 @@ const WidgetCarousel = () => {
   };
 
   const handleForceCheck = async () => {
-    toast.promise(fetchCheckers(), {
+    const forceCheck = async () => {
+      try {
+        await client.post(
+          `/v2/api/platforms/${currentWorkspace?.id}/force_checker/`
+        );
+      } catch (error) {
+        console.error("Failed to post to /v2/api/force_checker:", error);
+      }
+    };
+
+    toast.promise(forceCheck(), {
       loading: "Checking...",
       success: "Checkers updated successfully!",
       error: "Failed to update checkers.",
