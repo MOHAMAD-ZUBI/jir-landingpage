@@ -1,13 +1,42 @@
 "use client";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { Button, Spinner } from "@nextui-org/react";
 
 import OracleDashboard from "./components/Oracle/OracleDashboard";
 import TıtleHeading from "./components/Reusable/TıtleHeading";
 
 const DashboardPage = () => {
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, workspaces } = useWorkspace();
 
-  console.log({ currentWorkspace });
+  if (workspaces.length === 0) {
+    return (
+      <div className="w-full h-[80vh] flex flex-col items-center justify-center">
+        <div className="text-center space-y-4 max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-gray-800">Welcome to JIR!</h2>
+          <p className="text-gray-600">
+            To get started, you'll need to add a workspace. Head over to the
+            Credentials page to set up your first workspace.
+          </p>
+          <Button
+            color="primary"
+            href="/dashboard/credentials"
+            as="a"
+            className="mt-4"
+          >
+            Set Up Workspace
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentWorkspace) {
+    return (
+      <div className="w-full h-[80vh] flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   const renderWorkspaceContent = () => {
     switch (currentWorkspace.platform_type) {
@@ -63,18 +92,3 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
-
-// import React from "react";
-// import AddRule from "./components/Oracle/AddRule";
-// import { useAuth } from "@/context/AuthContext";
-// import AddNestedJob from "./components/Oracle/AddNestedJob";
-
-// type Props = {};
-
-// const page = (props: Props) => {
-//   const { user } = useAuth();
-//   console.log({ user });
-//   return <AddNestedJob />;
-// };
-
-// export default page;

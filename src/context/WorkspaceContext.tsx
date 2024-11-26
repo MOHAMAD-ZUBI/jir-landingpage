@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import client from "@/utils/client";
+import { Spinner } from "@nextui-org/react";
 
 export type Workspace = {
   id: number;
@@ -20,29 +21,15 @@ export type Workspace = {
 };
 
 type WorkspaceContextType = {
-  currentWorkspace: Workspace;
+  currentWorkspace: Workspace | null;
   setCurrentWorkspace: (workspace: Workspace) => void;
   workspaces: Workspace[];
+  isLoading: boolean;
 };
 
 export const WorkspaceContext = createContext<WorkspaceContextType | undefined>(
   undefined
 );
-
-export function WorkspaceProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  return (
-    <Suspense fallback={null}>
-      <WorkspaceContent pathname={pathname} router={router}>
-        {children}
-      </WorkspaceContent>
-    </Suspense>
-  );
-}
-
-const LAST_WORKSPACE_KEY = "lastSelectedWorkspace";
 
 function WorkspaceContent({
   children,
@@ -58,75 +45,82 @@ function WorkspaceContent({
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(
     null
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchWorkspaces() {
+      console.log("Fetching workspaces...");
+      setIsLoading(true);
       try {
         const { data } = await client.get<Workspace[]>("/v2/api/platforms/");
+        console.log("Fetched workspaces:", data);
         setWorkspaces(data);
 
-        // First check URL params
-        const workspaceId = searchParams.get("workspace");
+        if (data.length > 0) {
+          const workspaceId = searchParams.get("workspace");
+          const savedWorkspaceId = localStorage.getItem("lastWorkspace");
 
-        // Then check localStorage
-        const savedWorkspaceId = localStorage.getItem(LAST_WORKSPACE_KEY);
+          let workspace: Workspace | undefined;
 
-        let workspace: Workspace | undefined;
-
-        if (workspaceId) {
-          // If workspace is in URL, use that
-          workspace = data.find((w) => w.id.toString() === workspaceId);
-          if (workspace) {
-            localStorage.setItem(LAST_WORKSPACE_KEY, workspace.id.toString());
+          if (workspaceId) {
+            workspace = data.find((w) => w.id.toString() === workspaceId);
+          } else if (savedWorkspaceId) {
+            workspace = data.find((w) => w.id.toString() === savedWorkspaceId);
           }
-        } else if (savedWorkspaceId) {
-          // If no workspace in URL but exists in localStorage, use that
-          workspace = data.find((w) => w.id.toString() === savedWorkspaceId);
-        }
 
-        // Fallback to first workspace if nothing found
-        setCurrentWorkspace(workspace || data[0]);
-
-        // Update URL if needed
-        if (!workspaceId && workspace) {
-          const params = new URLSearchParams(searchParams.toString());
-          params.set("workspace", workspace.id.toString());
-          router.replace(`${pathname}?${params.toString()}`);
+          setCurrentWorkspace(workspace || data[0]);
         }
       } catch (error) {
-        console.error("Failed to fetch workspaces:", error);
+        console.error("Error fetching workspaces:", error);
+      } finally {
+        console.log("Setting isLoading to false");
+        setIsLoading(false);
       }
     }
 
     fetchWorkspaces();
   }, [searchParams, pathname, router]);
 
-  const handleWorkspaceChange = (workspace: Workspace) => {
-    // Update URL
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("workspace", workspace.id.toString());
-    router.push(`${pathname}?${params.toString()}`);
+  // Add debug logs
+  console.log("WorkspaceContext state:", {
+    isLoading,
+    workspacesCount: workspaces.length,
+    hasCurrentWorkspace: !!currentWorkspace,
+  });
 
-    // Save to localStorage
-    localStorage.setItem(LAST_WORKSPACE_KEY, workspace.id.toString());
-
-    setCurrentWorkspace(workspace);
+  const value = {
+    currentWorkspace,
+    setCurrentWorkspace: (workspace: Workspace) => {
+      setCurrentWorkspace(workspace);
+      localStorage.setItem("lastWorkspace", workspace.id.toString());
+    },
+    workspaces,
+    isLoading,
   };
 
-  if (!currentWorkspace) {
-    return null;
-  }
-
   return (
-    <WorkspaceContext.Provider
-      value={{
-        currentWorkspace,
-        setCurrentWorkspace: handleWorkspaceChange,
-        workspaces,
-      }}
-    >
+    <WorkspaceContext.Provider value={value}>
       {children}
     </WorkspaceContext.Provider>
+  );
+}
+
+export function WorkspaceProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full h-screen flex items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      }
+    >
+      <WorkspaceContent pathname={pathname} router={router}>
+        {children}
+      </WorkspaceContent>
+    </Suspense>
   );
 }
 

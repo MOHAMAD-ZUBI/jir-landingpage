@@ -424,9 +424,7 @@ const CredentialsPage = () => {
           {/* Existing Oracle Hyperion Workspaces */}
           <div className="mb-10">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">
-                Oracle Hyperion Workspaces
-              </h2>
+              <h2 className="text-xl font-semibold">JIR Workspaces</h2>
               <button
                 onClick={() => setIsAddingNew(true)}
                 className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"

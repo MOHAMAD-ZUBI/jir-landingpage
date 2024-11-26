@@ -13,6 +13,8 @@ import {
 import { logOut } from "@/utils/authFunctions";
 import SidebarLink from "./SidebarLink";
 import { Button } from "@nextui-org/react";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   handleSidebar: () => void;
@@ -32,6 +34,15 @@ const Links = [
   },
 ];
 const Sidebar: FC<SidebarProps> = ({ handleSidebar }) => {
+  const { workspaces } = useWorkspace();
+  const pathname = usePathname();
+  const isCredentialsPage = pathname === "/dashboard/credentials";
+
+  // Show sidebar if there are workspaces or if we're on the credentials page
+  if (workspaces.length === 0 && !isCredentialsPage) {
+    return null;
+  }
+
   return (
     <div className="fixed p-6 bg-white/80 h-screen flex flex-col justify-between w-[300px]">
       <div>
