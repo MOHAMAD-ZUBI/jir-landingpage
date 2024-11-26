@@ -13,6 +13,8 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { Tooltip } from "@nextui-org/react";
 
 // Add workspace type enum
 enum WorkspaceType {
@@ -439,38 +441,47 @@ const CredentialsPage = () => {
                 <div className="flex justify-between items-center mb-4">
                   <h4 className="text-lg font-medium">Workspace #{cred.id}</h4>
                   <div className="flex gap-2">
-                    {/* Edit button */}
-                    <a
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (editingId === cred.id) {
-                          handleUpdate(cred.id);
-                        } else {
-                          setEditingId(cred.id);
-                          setEditForm({
-                            email: cred.email,
-                            url_1: cred.url_1 || "",
-                            url_2: cred.url_2 || "",
-                            password: "",
-                          });
-                        }
-                      }}
-                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors no-underline"
+                    <Tooltip
+                      content={editingId === cred.id ? "Save Changes" : "Edit"}
                     >
-                      {editingId === cred.id ? "Save Changes" : "Edit"}
-                    </a>
+                      <Button
+                        isIconOnly
+                        color="primary"
+                        variant="light"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (editingId === cred.id) {
+                            handleUpdate(cred.id);
+                          } else {
+                            setEditingId(cred.id);
+                            setEditForm({
+                              email: cred.email,
+                              url_1: cred.url_1 || "",
+                              url_2: cred.url_2 || "",
+                              password: "",
+                            });
+                          }
+                        }}
+                        className="text-lg"
+                      >
+                        <FiEdit2 />
+                      </Button>
+                    </Tooltip>
 
-                    {/* Delete button */}
-                    <button
-                      onClick={() => {
-                        setDeletingId(cred.id);
-                        onDeleteOpen();
-                      }}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                    >
-                      Delete
-                    </button>
+                    <Tooltip content="Delete" color="danger">
+                      <Button
+                        isIconOnly
+                        color="danger"
+                        variant="light"
+                        onClick={() => {
+                          setDeletingId(cred.id);
+                          onDeleteOpen();
+                        }}
+                        className="text-lg"
+                      >
+                        <FiTrash2 />
+                      </Button>
+                    </Tooltip>
                   </div>
                 </div>
 
