@@ -5,6 +5,7 @@ import CustomCard from "../Reusable/CustomCard";
 import client from "@/utils/client";
 import { Job } from "../../../../../types";
 import { Pagination, Input } from "@nextui-org/react";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 export interface AutomatedJob {
   title: string;
@@ -18,8 +19,13 @@ const AutomatedJobs = ({}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 9;
 
+  const { currentWorkspace } = useWorkspace();
+  console.log({ currentWorkspace });
+
   const fetchJobs = async () => {
-    const { data } = await client.get("/v2/api/shortcuts/");
+    const { data } = await client.get(
+      `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/`
+    );
     setJobs(data);
   };
 
@@ -63,6 +69,7 @@ const AutomatedJobs = ({}) => {
               title: job.name,
               name: job.name,
               status: job.is_active,
+              last_status: job.last_status,
               sharedWGroups: job.shared_w_groups,
               rules: job.rules || [],
             }}

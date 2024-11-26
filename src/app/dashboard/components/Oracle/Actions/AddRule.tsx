@@ -4,6 +4,7 @@ import client from "@/utils/client";
 import { Input, Textarea, Button, Select, SelectItem } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";
 import { Rule } from "../../../../../../types";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 type Props = {
   onSuccess?: () => void;
@@ -11,6 +12,7 @@ type Props = {
 
 const AddRule = ({ onSuccess }: Props) => {
   const [Rules, setRules] = useState<Rule[]>([]);
+  const { currentWorkspace } = useWorkspace();
   const [formData, setFormData] = useState({
     name: "",
     rule: "",
@@ -63,7 +65,10 @@ const AddRule = ({ onSuccess }: Props) => {
     setError("");
 
     try {
-      await client.post("/v2/api/rules/", formData);
+      await client.post(
+        `/v2/api/platforms/${currentWorkspace?.id}/rules/`,
+        formData
+      );
       setFormData({ name: "", rule: "", type: 1 });
       onSuccess?.();
       toast.promise(

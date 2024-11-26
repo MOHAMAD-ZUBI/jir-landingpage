@@ -144,9 +144,9 @@ const Logs: React.FC = () => {
         1: {
           color: "warning",
           icon: <BiLoaderAlt className="text-lg animate-spin" />,
-          text: "Running",
+          text: "Loading",
         },
-        0: {
+        3: {
           color: "danger",
           icon: <FaTimesCircle className="text-lg" />,
           text: "Failed",

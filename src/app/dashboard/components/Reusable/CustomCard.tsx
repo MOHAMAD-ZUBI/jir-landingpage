@@ -11,14 +11,16 @@ import {
   ModalBody,
   useDisclosure,
   Button,
+  ModalFooter,
 } from "@nextui-org/react";
-import { FaRegEdit, FaPlay } from "react-icons/fa";
+import { FaRegEdit, FaPlay, FaTrash } from "react-icons/fa";
 import CreateJob from "../Oracle/Actions/AddNestedJob";
 import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
 import { MdOutlineReplay } from "react-icons/md";
 import { useState } from "react";
 import { useEnvironment } from "@/context/EnvironmentContext";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 interface JobCard {
   id: number;
@@ -26,6 +28,7 @@ interface JobCard {
   name: string;
   status: boolean;
   sharedWGroups: boolean;
+  last_status: 1 | 2 | 3;
   user?: number;
   groups?: any[];
   rules: Array<{
@@ -48,7 +51,13 @@ export default function App({
   onUpdate: () => void;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
+  const { currentWorkspace } = useWorkspace();
   const { environment } = useEnvironment();
 
   const handleClose = () => {
@@ -60,7 +69,7 @@ export default function App({
     setIsLoading(true);
     try {
       await client.post(
-        "/v2/api/run_shortcut/",
+        `/v2/api/platforms/${currentWorkspace?.id}/run_shortcut/`,
         { id: Number(job.id) },
         { headers: { LIVE: environment } }
       );
@@ -81,6 +90,24 @@ export default function App({
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await client.delete(
+        `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/${job.id}/`,
+        {
+          headers: { LIVE: environment },
+        }
+      );
+
+      toast.success("Job deleted successfully!");
+      onDeleteClose();
+      onUpdate();
+    } catch (error) {
+      toast.error("Failed to delete job");
+      console.error("Error deleting job:", error);
     }
   };
 
@@ -113,6 +140,14 @@ export default function App({
                 >
                   <FaRegEdit className="text-white" size={16} />
                 </Button>
+                <Button
+                  isIconOnly
+                  className="bg-red-700/50 hover:bg-red-600/50 transition-colors"
+                  size="sm"
+                  onClick={onDeleteOpen}
+                >
+                  <FaTrash className="text-white" size={16} />
+                </Button>
               </div>
             </div>
             <p className="text-small text-gray-300 flex items-center gap-2">
@@ -132,14 +167,28 @@ export default function App({
         </CardHeader>
         <Divider className="bg-slate-700/50" />
         <CardBody className="py-3">
-          <div className="flex items-center gap-2">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                job.status ? "bg-green-400" : "bg-red-400"
-              }`}
-            ></span>
-            <p className="text-gray-300">
-              {job.status ? "Active" : "Inactive"}
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-gray-400">Last Status</p>
+            <div className="flex items-center gap-2">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  job.last_status === 2
+                    ? "bg-green-400"
+                    : job.last_status === 1
+                    ? "bg-blue-400"
+                    : "bg-red-400"
+                }`}
+              ></span>
+              <p className="text-gray-300">
+                {job.last_status === 2
+                  ? "Completed"
+                  : job.last_status === 1
+                  ? "Loading"
+                  : "Failed"}
+              </p>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              This is the most recent execution status
             </p>
           </div>
         </CardBody>
@@ -176,6 +225,24 @@ export default function App({
               onSuccess={handleClose}
             />
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+        <ModalContent>
+          <ModalHeader>Confirm Delete</ModalHeader>
+          <ModalBody>
+            Are you sure you want to delete this job? This action cannot be
+            undone.
+          </ModalBody>
+          <ModalFooter>
+            <Button color="default" variant="light" onPress={onDeleteClose}>
+              Cancel
+            </Button>
+            <Button color="danger" onPress={handleDelete}>
+              Delete
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

@@ -15,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Jir",
-  description: "Jir",
+  title: "JIR Automator",
+  description: "JIR Automator",
 };
 
 export default function RootLayout({

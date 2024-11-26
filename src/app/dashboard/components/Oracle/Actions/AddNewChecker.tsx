@@ -13,6 +13,7 @@ import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
 import { IoAdd } from "react-icons/io5";
 import { FaTrash } from "react-icons/fa";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 interface Intersection {
   op: "add" | "sub" | "none";
@@ -42,6 +43,7 @@ const AddNewChecker = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const { currentWorkspace } = useWorkspace();
 
   const addIntersection = () => {
     setFormData({
@@ -133,7 +135,10 @@ const AddNewChecker = () => {
         })),
       };
 
-      await client.post("/v2/api/newchecker/", payload);
+      await client.post(
+        `/v2/api/platforms/${currentWorkspace?.id}/newchecker/`,
+        payload
+      );
       toast.success("Checker created successfully");
       // Reset form
       setFormData({

@@ -14,6 +14,7 @@ import {
 import client from "@/utils/client";
 import toast, { Toaster } from "react-hot-toast";
 import { Job, Rule } from "../../../../../../types";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 export default function CreateJob({
   onOpenRuleModal,
@@ -50,11 +51,14 @@ export default function CreateJob({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [Rules, setRules] = useState<Rule[]>([]);
+  const { currentWorkspace } = useWorkspace();
 
   console.log({ formData });
 
   const fetchRules = async () => {
-    const { data } = await client.get("/v2/api/rules/");
+    const { data } = await client.get(
+      `/v2/api/platforms/${currentWorkspace?.id}/rules/`
+    );
     setRules(data);
   };
 
@@ -141,11 +145,39 @@ export default function CreateJob({
     setLoading(true);
     setError("");
 
+    const updatedFormData = {
+      ...formData,
+      shared_w_groups: formData.shared_w_groups || false,
+    };
+
+    const hasEmptyParams = updatedFormData.rules.some(
+      (rule) =>
+        rule.params.length === 0 ||
+        rule.params.some((param) => !param.name.trim() || !param.value.trim())
+    );
+
+    if (hasEmptyParams) {
+      setError(
+        "Each rule must have at least one parameter with both name and value"
+      );
+      toast.error(
+        "Each rule must have at least one parameter with both name and value"
+      );
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isEditing) {
-        await client.put(`/v2/api/shortcuts/${initialData?.id}/`, formData);
+        await client.put(
+          `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/${initialData?.id}/`,
+          updatedFormData
+        );
       } else {
-        await client.post("/v2/api/shortcuts/", formData);
+        await client.post(
+          `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/`,
+          updatedFormData
+        );
       }
 
       await toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
@@ -188,6 +220,7 @@ export default function CreateJob({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Toaster position="top-right" />
+      {error && <div className="text-red-500 text-sm">{error}</div>}
       <div className="space-y-4">
         <Input
           label="Job Name"
@@ -195,6 +228,15 @@ export default function CreateJob({
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
         />
+
+        <Checkbox
+          isSelected={formData.shared_w_groups}
+          onValueChange={(checked) =>
+            setFormData({ ...formData, shared_w_groups: checked })
+          }
+        >
+          Share with Groups
+        </Checkbox>
 
         {formData.rules?.map((rule, ruleIndex) => (
           <Card key={ruleIndex} className="p-2">
@@ -281,6 +323,7 @@ export default function CreateJob({
                       )
                     }
                     className="flex-1"
+                    isRequired={paramIndex === 0}
                   />
                   <Input
                     label="Parameter Value"
@@ -294,6 +337,7 @@ export default function CreateJob({
                       )
                     }
                     className="flex-1"
+                    isRequired={paramIndex === 0}
                   />
                   <Button
                     color="danger"
@@ -301,6 +345,7 @@ export default function CreateJob({
                     variant="light"
                     isIconOnly
                     onClick={() => handleDeleteParam(ruleIndex, paramIndex)}
+                    disabled={paramIndex === 0 && rule.params.length === 1}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

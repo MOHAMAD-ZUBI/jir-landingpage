@@ -4,6 +4,15 @@ import { Input } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";
 import TıtleHeading from "../components/Reusable/TıtleHeading";
 import client from "@/utils/client";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
 
 // Add workspace type enum
 enum WorkspaceType {
@@ -45,7 +54,7 @@ interface PlatformCredential {
   database?: string;
   serverUrl?: string;
   apiKey?: string;
-  platform: WorkspaceType;
+  platform_type: WorkspaceType;
 }
 
 const CredentialsPage = () => {
@@ -81,6 +90,13 @@ const CredentialsPage = () => {
     password: "", // Optional for updates
   });
 
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
   // Fetch existing credentials on mount
   useEffect(() => {
     const fetchCredentials = async () => {
@@ -88,7 +104,7 @@ const CredentialsPage = () => {
         const { data } = await client.get("/v2/api/platforms/");
         const hyperionCreds = data.filter(
           (cred: PlatformCredential) =>
-            cred.platform === WorkspaceType.ORACLE_PBCS
+            cred.platform_type === WorkspaceType.ORACLE_PBCS
         );
         setHyperionCredentials(hyperionCreds);
         console.log("Fetched credentials:", hyperionCreds);
@@ -159,7 +175,7 @@ const CredentialsPage = () => {
           payload = {
             email: newCredential.email,
             password: newCredential.password,
-            platform: WorkspaceType.ORACLE_PBCS,
+            platform_type: WorkspaceType.ORACLE_PBCS,
             url_1: newCredential.url_1,
             url_2: newCredential.url_2,
           };
@@ -168,14 +184,14 @@ const CredentialsPage = () => {
           payload = {
             email: newCredential.email,
             password: newCredential.password,
-            platform: WorkspaceType.ODOO,
+            platform_type: WorkspaceType.ODOO,
             database: newCredential.database,
             server_url: newCredential.serverUrl,
           };
           break;
         case WorkspaceType.GTM_AGENT:
           payload = {
-            platform: WorkspaceType.GTM_AGENT,
+            platform_type: WorkspaceType.GTM_AGENT,
             api_key: newCredential.apiKey,
           };
           break;
@@ -369,6 +385,30 @@ const CredentialsPage = () => {
     }
   };
 
+  // Add delete handler
+  const handleDelete = async () => {
+    if (!deletingId) return;
+
+    try {
+      await client.delete(`/v2/api/platforms/${deletingId}/`);
+      setHyperionCredentials((prev) =>
+        prev.filter((cred) => cred.id !== deletingId)
+      );
+      toast.success("Workspace deleted successfully!");
+      onDeleteClose();
+      setDeletingId(null);
+    } catch (error: any) {
+      console.error("Error deleting workspace:", error);
+      if (error.response?.status === 401) {
+        toast.error("Authentication failed. Please log in again.");
+      } else if (error.response?.status === 403) {
+        toast.error("You don't have permission to delete this workspace.");
+      } else {
+        toast.error("Failed to delete workspace");
+      }
+    }
+  };
+
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
       <Toaster position="top-right" />
@@ -400,12 +440,12 @@ const CredentialsPage = () => {
               <div key={cred.id} className="mb-8 p-4 border rounded-lg">
                 <div className="flex justify-between items-center mb-4">
                   <h4 className="text-lg font-medium">Workspace #{cred.id}</h4>
-                  <div className="relative" style={{ isolation: "isolate" }}>
+                  <div className="flex gap-2">
+                    {/* Edit button */}
                     <a
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        e.stopPropagation();
                         if (editingId === cred.id) {
                           handleUpdate(cred.id);
                         } else {
@@ -418,14 +458,21 @@ const CredentialsPage = () => {
                           });
                         }
                       }}
-                      className="block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors no-underline relative z-10"
-                      style={{
-                        WebkitTapHighlightColor: "transparent",
-                        touchAction: "manipulation",
-                      }}
+                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors no-underline"
                     >
                       {editingId === cred.id ? "Save Changes" : "Edit"}
                     </a>
+
+                    {/* Delete button */}
+                    <button
+                      onClick={() => {
+                        setDeletingId(cred.id);
+                        onDeleteOpen();
+                      }}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
 
@@ -662,6 +709,25 @@ const CredentialsPage = () => {
               </div>
             )}
           </div>
+
+          {/* Add Delete Confirmation Modal */}
+          <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+            <ModalContent>
+              <ModalHeader>Confirm Delete</ModalHeader>
+              <ModalBody>
+                Are you sure you want to delete this workspace? This action
+                cannot be undone.
+              </ModalBody>
+              <ModalFooter>
+                <Button color="default" variant="light" onPress={onDeleteClose}>
+                  Cancel
+                </Button>
+                <Button color="danger" onPress={handleDelete}>
+                  Delete
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </>
       )}
     </div>

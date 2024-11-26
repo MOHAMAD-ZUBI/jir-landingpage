@@ -10,7 +10,7 @@ const DashboardPage = () => {
   console.log({ currentWorkspace });
 
   const renderWorkspaceContent = () => {
-    switch (currentWorkspace.platform) {
+    switch (currentWorkspace.platform_type) {
       case 1: // Oracle
         return (
           <div className="w-full">

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import AddNestedJob from "./Actions/AddNestedJob";
 
 import {
@@ -31,9 +31,13 @@ type Props = {};
 const OracleDashboard = (props: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const { environment, setEnvironment } = useEnvironment();
+  const { currentWorkspace } = useWorkspace();
   const [modalType, setModalType] = React.useState<
     "job" | "checker" | "rule" | null
   >(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const workspaceKey = `workspace-${currentWorkspace.id}-${environment}`;
 
   const handleOpenModal = (type: "job" | "checker" | "rule") => {
     setModalType(type);
@@ -77,7 +81,8 @@ const OracleDashboard = (props: Props) => {
           <div className="flex flex-row justify-between items-center">
             <div>
               <h2 className="text-2xl max-md:text-lg font-semibold md:font-bold flex items-center gap-2">
-                <HiMiniQueueList /> <span>Oracle Dashboard</span>
+                <HiMiniQueueList />{" "}
+                <span>Oracle Dashboard - {currentWorkspace.email}</span>
               </h2>
               <p className="text-sm max-md:text-xs text-gray-500">
                 Monitor and manage your automated tasks
@@ -85,9 +90,9 @@ const OracleDashboard = (props: Props) => {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Switch
-                isSelected={environment === 1}
+                isSelected={environment === 0}
                 onValueChange={(isSelected) =>
-                  setEnvironment(isSelected ? 1 : 0)
+                  setEnvironment(isSelected ? 0 : 1)
                 }
               />
               <p className="text-sm max-md:text-xs text-gray-500">
@@ -113,8 +118,7 @@ const OracleDashboard = (props: Props) => {
           <h2 className="text-2xl max-md:text-xl font-semibold md:font-bold flex items-center gap-2">
             <TbStatusChange /> <span>Checker Status</span>
           </h2>
-
-          <WidgetCarousel />
+          <WidgetCarousel key={`widgets-${workspaceKey}`} />
         </div>
 
         {/* Actions Section
@@ -136,12 +140,12 @@ const OracleDashboard = (props: Props) => {
           <p className="text-sm text-gray-500">
             View and manage your automated jobs
           </p>
-          <AutomatedJobs />
+          <AutomatedJobs key={`jobs-${workspaceKey}`} />
         </div>
 
         {/* Logs Section */}
 
-        <Logs />
+        <Logs key={`logs-${workspaceKey}`} />
       </div>
 
       <Modal

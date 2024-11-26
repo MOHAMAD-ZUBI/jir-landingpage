@@ -5,10 +5,12 @@ import {
   Button,
   Select,
   SelectItem,
+  Selection,
 } from "@nextui-org/react";
 import { HiMenuAlt2, HiChevronDown } from "react-icons/hi";
 import { useWorkspace, Workspace } from "@/context/WorkspaceContext";
 import UserDropdown from "./UserDropdown";
+import { useRouter, usePathname } from "next/navigation";
 
 interface NavProps {
   handleSidebar: () => void;
@@ -16,11 +18,13 @@ interface NavProps {
 
 const Nav = ({ handleSidebar }: NavProps) => {
   const { currentWorkspace, setCurrentWorkspace, workspaces } = useWorkspace();
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Create a map to track platform type counts
   const platformCounts = workspaces.reduce<Record<number, number>>(
     (acc, workspace) => {
-      acc[workspace.platform] = (acc[workspace.platform] || 0) + 1;
+      acc[workspace.platform_type] = (acc[workspace.platform_type] || 0) + 1;
       return acc;
     },
     {}
@@ -29,9 +33,26 @@ const Nav = ({ handleSidebar }: NavProps) => {
   // Get the index for a specific workspace within its platform type
   const getPlatformIndex = (workspace: Workspace) => {
     const sameTypePlatforms = workspaces
-      .filter((w) => w.platform === workspace.platform)
+      .filter((w) => w.platform_type === workspace.platform_type)
       .sort((a, b) => a.id - b.id);
     return sameTypePlatforms.findIndex((w) => w.id === workspace.id) + 1;
+  };
+
+  const handleWorkspaceChange = (keys: Selection) => {
+    const selectedKey = Array.from(keys).toString();
+    if (!selectedKey) return;
+
+    const selectedId = parseInt(selectedKey);
+    const workspace = workspaces.find((w) => w.id === selectedId);
+
+    if (workspace) {
+      setCurrentWorkspace(workspace);
+
+      // If we're not on the dashboard, redirect there
+      if (pathname !== "/dashboard") {
+        router.push(`/dashboard?workspace=${selectedId}`);
+      }
+    }
   };
 
   return (
@@ -56,16 +77,12 @@ const Nav = ({ handleSidebar }: NavProps) => {
               : new Set()
           }
           className="max-w-xs"
-          onSelectionChange={(keys) => {
-            const selectedId = parseInt(Array.from(keys)[0] as string);
-            const workspace = workspaces.find((w) => w.id === selectedId);
-            if (workspace) setCurrentWorkspace(workspace);
-          }}
+          onSelectionChange={handleWorkspaceChange}
           renderValue={(items) => {
             return items.map((item) => (
               <div key={item.key} className="flex flex-col">
                 <span>
-                  {currentWorkspace.platform === 1 && (
+                  {currentWorkspace.platform_type === 1 && (
                     <>
                       Oracle PBCS
                       {platformCounts[1] > 1
@@ -89,7 +106,7 @@ const Nav = ({ handleSidebar }: NavProps) => {
             >
               <div className="flex flex-col">
                 <span>
-                  {workspace.platform === 1 && (
+                  {workspace.platform_type === 1 && (
                     <>
                       Oracle PBCS
                       {platformCounts[1] > 1

@@ -16,6 +16,7 @@ import { IoAdd } from "react-icons/io5";
 import { FaTrash } from "react-icons/fa";
 import client from "@/utils/client";
 import toast from "react-hot-toast";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 interface EditCheckerModalProps {
   isOpen: boolean;
@@ -48,6 +49,7 @@ const EditCheckerModal = ({
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const { currentWorkspace } = useWorkspace();
 
   useEffect(() => {
     if (checker) {
@@ -165,7 +167,10 @@ const EditCheckerModal = ({
         })),
       };
 
-      await client.put(`/v2/api/newchecker/${checker.id}/`, payload);
+      await client.put(
+        `/v2/api/platforms/${currentWorkspace?.id}/newchecker/${checker.id}/`,
+        payload
+      );
       toast.success("Checker updated successfully");
       onClose();
     } catch (error) {
