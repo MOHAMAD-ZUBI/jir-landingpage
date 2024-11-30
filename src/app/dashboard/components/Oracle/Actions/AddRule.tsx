@@ -30,22 +30,22 @@ const AddRule = ({ onSuccess }: Props) => {
       value: 2,
       display_name: "BUS_RULE",
     },
-    {
-      value: 3,
-      display_name: "JOB",
-    },
-    {
-      value: 4,
-      display_name: "OTHER",
-    },
+    // {
+    //   value: 3,
+    //   display_name: "JOB",
+    // },
+    // {
+    //   value: 4,
+    //   display_name: "OTHER",
+    // },
     {
       value: 5,
       display_name: "PIPE_LINE",
     },
-    {
-      value: 6,
-      display_name: "PY_FUNC",
-    },
+    // {
+    //   value: 6,
+    //   display_name: "PY_FUNC",
+    // },
   ];
 
   const handleChange = (

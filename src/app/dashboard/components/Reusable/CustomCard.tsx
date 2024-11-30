@@ -21,6 +21,7 @@ import { MdOutlineReplay } from "react-icons/md";
 import { useState } from "react";
 import { useEnvironment } from "@/context/EnvironmentContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface JobCard {
   id: number;
@@ -59,7 +60,8 @@ export default function App({
   const [isLoading, setIsLoading] = useState(false);
   const { currentWorkspace } = useWorkspace();
   const { environment } = useEnvironment();
-
+  const { user } = useAuth();
+  // console.log({ user });
   const handleClose = () => {
     onUpdate();
     onClose();
