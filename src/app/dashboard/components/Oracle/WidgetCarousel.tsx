@@ -125,8 +125,10 @@ const WidgetCarousel = () => {
         await client.post(
           `/v2/api/platforms/${currentWorkspace?.id}/force_checker/`
         );
+        await fetchCheckers(); // Refetch checkers after force check completes
       } catch (error) {
         console.error("Failed to post to /v2/api/force_checker:", error);
+        throw error; // Re-throw to trigger the error toast
       }
     };
 
