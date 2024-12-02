@@ -14,8 +14,13 @@ export interface AutomatedJob {
   createdAt: string;
 }
 
-const AutomatedJobs = ({}) => {
-  const [jobs, setJobs] = useState([]);
+const AutomatedJobs = ({
+  jobs,
+  fetchJobs,
+}: {
+  jobs: any[];
+  fetchJobs: () => void;
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 9;
@@ -23,21 +28,6 @@ const AutomatedJobs = ({}) => {
 
   const { currentWorkspace } = useWorkspace();
   console.log({ currentWorkspace });
-
-  const fetchJobs = async () => {
-    try {
-      const { data } = await client.get(
-        `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/`
-      );
-      setJobs(data);
-    } catch (error) {
-      console.error("Failed to fetch jobs:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchJobs();
-  }, [currentWorkspace]);
 
   const filteredJobs = jobs.filter((job) => {
     const searchTerm = searchQuery.toLowerCase();

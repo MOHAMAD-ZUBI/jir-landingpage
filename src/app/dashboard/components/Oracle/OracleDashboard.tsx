@@ -26,6 +26,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { useWorkspace, Workspace } from "@/context/WorkspaceContext";
 import { useEnvironment } from "@/context/EnvironmentContext";
 import Logs from "./Logs";
+import client from "@/utils/client";
 
 type Props = {};
 
@@ -34,13 +35,28 @@ const OracleDashboard = (props: Props) => {
   const { environment, setEnvironment } = useEnvironment();
   const { currentWorkspace } = useWorkspace();
 
-  console.log({ currentWorkspace });
+  const [jobs, setJobs] = React.useState([]);
+  const workspaceKey = `workspace-${currentWorkspace.id}-${environment}`;
+
+  const fetchJobs = async () => {
+    try {
+      const { data } = await client.get(
+        `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/`
+      );
+      setJobs(data);
+    } catch (error) {
+      console.error("Failed to fetch jobs:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, [currentWorkspace]);
+
   const [modalType, setModalType] = React.useState<
     "job" | "checker" | "rule" | null
   >(null);
   const [isLoading, setIsLoading] = React.useState(false);
-
-  const workspaceKey = `workspace-${currentWorkspace.id}-${environment}`;
 
   const handleOpenModal = (type: "job" | "checker" | "rule") => {
     setModalType(type);
@@ -63,7 +79,12 @@ const OracleDashboard = (props: Props) => {
   const getModalContent = () => {
     switch (modalType) {
       case "job":
-        return <AddNestedJob onOpenRuleModal={() => handleOpenModal("rule")} />;
+        return (
+          <AddNestedJob
+            onOpenRuleModal={() => handleOpenModal("rule")}
+            onSuccess={fetchJobs}
+          />
+        );
       case "checker":
         return <AddNewChecker />;
       case "rule":
@@ -155,7 +176,11 @@ const OracleDashboard = (props: Props) => {
           <p className="text-sm text-gray-500">
             View and manage your automated jobs
           </p>
-          <AutomatedJobs key={`jobs-${workspaceKey}`} />
+          <AutomatedJobs
+            jobs={jobs}
+            fetchJobs={fetchJobs}
+            key={`jobs-${workspaceKey}`}
+          />
         </div>
 
         {/* Logs Section */}
