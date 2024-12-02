@@ -269,7 +269,7 @@ const CredentialsPage = () => {
       );
 
       // Update the current workspace in the context
-      setCurrentWorkspace(data);
+      // setCurrentWorkspace(data);
 
       setEditingId(null);
       setEditForm({
