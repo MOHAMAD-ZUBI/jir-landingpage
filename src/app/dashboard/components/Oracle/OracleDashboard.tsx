@@ -11,6 +11,7 @@ import {
   useDisclosure,
   Divider,
   Switch,
+  Tooltip,
 } from "@nextui-org/react";
 import { HiMiniQueueList } from "react-icons/hi2";
 import { TbStatusChange } from "react-icons/tb";
@@ -91,14 +92,24 @@ const OracleDashboard = (props: Props) => {
               </p>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <Switch
-                isSelected={environment === 1}
-                onValueChange={(isSelected) => {
-                  if (currentWorkspace.url_2) {
-                    setEnvironment(isSelected ? 1 : 0);
-                  }
-                }}
-              />
+              <Tooltip
+                content="Provide a test URL in workspace settings to enable testing environment"
+                isDisabled={!!currentWorkspace.url_2}
+              >
+                <div>
+                  <Switch
+                    isSelected={
+                      currentWorkspace.url_2 ? environment === 1 : true
+                    }
+                    onValueChange={(isSelected) => {
+                      if (currentWorkspace.url_2) {
+                        setEnvironment(isSelected ? 1 : 0);
+                      }
+                    }}
+                    isDisabled={!currentWorkspace.url_2}
+                  />
+                </div>
+              </Tooltip>
               <p className="text-sm max-md:text-xs text-gray-500">
                 Live Environment
               </p>

@@ -15,6 +15,7 @@ import {
 } from "@nextui-org/react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Tooltip } from "@nextui-org/react";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 // Add workspace type enum
 enum WorkspaceType {
@@ -60,6 +61,8 @@ interface PlatformCredential {
 }
 
 const CredentialsPage = () => {
+  const { setCurrentWorkspace } = useWorkspace();
+
   // State for existing credentials
   const [hyperionCredentials, setHyperionCredentials] = useState<
     PlatformCredential[]
@@ -265,6 +268,9 @@ const CredentialsPage = () => {
         prev.map((cred) => (cred.id === id ? data : cred))
       );
 
+      // Update the current workspace in the context
+      setCurrentWorkspace(data);
+
       setEditingId(null);
       setEditForm({
         email: "",
@@ -464,7 +470,7 @@ const CredentialsPage = () => {
                         }}
                         className="text-lg"
                       >
-                        <FiEdit2 />
+                        {editingId === cred.id ? "Save" : <FiEdit2 />}
                       </Button>
                     </Tooltip>
 

@@ -292,7 +292,9 @@ const Logs: React.FC = () => {
                         variant="flat"
                         size="sm"
                       >
-                        {selectedLog.live_env ? "Production" : "Development"}
+                        {selectedLog.live_env
+                          ? "Live Environment"
+                          : "Test Environment"}
                       </Chip>
                     </div>
                   </div>
