@@ -2,7 +2,7 @@ import Featrues from "../components/main/Featrues";
 import GetStarted from "../components/main/GetStarted";
 import Hero from "../components/main/Hero";
 import Partners from "../components/main/Partners";
-import Pricing from "../components/main/Pricing";
+import Pricing from "../components/main/PricingV2";
 
 export default function Home() {
   return (

@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useEnvironment } from "@/context/EnvironmentContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useAuth } from "@/context/AuthContext";
+import { VscRunAll } from "react-icons/vsc";
 
 interface JobCard {
   id: number;
@@ -129,8 +130,8 @@ export default function App({
                   onClick={handleTriggerJob}
                   isDisabled={isLoading}
                 >
-                  <MdOutlineReplay
-                    className={`text-white ${isLoading ? "animate-spin" : ""}`}
+                  <VscRunAll
+                    className={`text-white ${isLoading ? "animate-pulse" : ""}`}
                     size={20}
                   />
                 </Button>
@@ -186,7 +187,7 @@ export default function App({
                   ? "Completed"
                   : job.last_status === 1
                   ? "Loading"
-                  : "Failed"}
+                  : "No History"}
               </p>
             </div>
             <p className="text-xs text-gray-400 mt-1">

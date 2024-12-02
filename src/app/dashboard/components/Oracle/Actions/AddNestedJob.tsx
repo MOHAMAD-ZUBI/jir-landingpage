@@ -21,11 +21,13 @@ export default function CreateJob({
   initialData,
   isEditing = false,
   onSuccess,
+  onClose,
 }: {
   onOpenRuleModal: () => void;
   initialData?: Job;
   isEditing?: boolean;
   onSuccess?: () => void;
+  onClose?: () => void;
 }) {
   const [formData, setFormData] = useState<Job>(
     initialData || {
@@ -180,16 +182,19 @@ export default function CreateJob({
         );
       }
 
-      await toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
-        loading: isEditing ? "Updating job..." : "Creating job...",
-        success: isEditing
-          ? "Job updated successfully!"
-          : "Job created successfully!",
-        error: isEditing ? "Failed to update job." : "Failed to create job.",
-      });
+      toast.success(
+        isEditing ? "Job updated successfully!" : "Job created successfully!"
+      );
 
+      // Log to verify function calls
+      console.log("Refreshing jobs...");
       if (onSuccess) {
-        onSuccess();
+        await onSuccess();
+      }
+
+      console.log("Closing modal...");
+      if (onClose) {
+        onClose();
       }
     } catch (err: any) {
       toast.error(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input, Link, Select, SelectItem } from "@nextui-org/react";
 import {
   signUp,
@@ -33,6 +33,10 @@ export default function SignUpPage() {
   const [otp, setOtp] = useState("");
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [authMethod, setAuthMethod] = useState<"email" | "phone" | null>(null);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [timer, setTimer] = useState(20); // 20 seconds timer
+  const [verificationSent, setVerificationSent] = useState(false); // Track if verification code is sent
 
   console.log(formData.phoneNumber);
   const countryCodes = [
@@ -43,6 +47,19 @@ export default function SignUpPage() {
     { label: "TR (+90)", value: "+90" },
     // Add more country codes as needed
   ];
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isResendDisabled && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setIsResendDisabled(false);
+      setTimer(20); // Reset timer
+    }
+    return () => clearInterval(interval);
+  }, [isResendDisabled, timer]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +106,8 @@ export default function SignUpPage() {
       );
       setVerificationId(verificationId);
       setShowOtpInput(true);
+      setIsResendDisabled(true); // Disable resend button
+      setVerificationSent(true); // Mark verification as sent
     } catch (error: any) {
       setError(error.message);
     }
@@ -96,6 +115,7 @@ export default function SignUpPage() {
 
   const handleVerifyOTP = async () => {
     try {
+      setSent(false);
       await verifyOTP(verificationId, otp);
       router.push("/dashboard");
     } catch (error: any) {
@@ -261,24 +281,70 @@ export default function SignUpPage() {
                   Send Verification Code
                 </button>
               ) : (
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter verification code"
-                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  />
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="flex justify-center space-x-1">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <input
+                        key={index}
+                        type="text"
+                        maxLength={1}
+                        value={otp[index] || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[0-9]$/.test(value) || value === "") {
+                            const newOtp = otp.split("");
+                            newOtp[index] = value;
+                            setOtp(newOtp.join(""));
+                            // Move to the next input if filled
+                            if (value && index < 5) {
+                              document
+                                .getElementById(`otp-input-${index + 1}`)
+                                ?.focus();
+                            }
+                          }
+                        }}
+                        onFocus={(e) => e.target.select()}
+                        onKeyDown={(e) => {
+                          if (e.key === "Backspace" && !otp[index]) {
+                            // Move to the previous input if current is empty
+                            if (index > 0) {
+                              document
+                                .getElementById(`otp-input-${index - 1}`)
+                                ?.focus();
+                            }
+                          }
+                        }}
+                        id={`otp-input-${index}`}
+                        className="w-12 h-12 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                      />
+                    ))}
+                  </div>
                   <button
                     type="button"
                     onClick={handleVerifyOTP}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                   >
                     Verify Code
                   </button>
                 </div>
               )}
             </div>
+
+            {verificationSent && isResendDisabled && (
+              <div className="text-center mt-4">
+                <p>Resend code in {timer} seconds</p>
+              </div>
+            )}
+
+            {verificationSent && !isResendDisabled && (
+              <button
+                type="button"
+                onClick={handlePhoneSignIn}
+                className="text-blue-600 hover:text-blue-800 mt-4"
+              >
+                Resend Code
+              </button>
+            )}
           </div>
         )}
 

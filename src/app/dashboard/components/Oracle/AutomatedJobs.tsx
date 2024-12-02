@@ -6,6 +6,7 @@ import client from "@/utils/client";
 import { Job } from "../../../../../types";
 import { Pagination, Input } from "@nextui-org/react";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import CreateJob from "./Actions/AddNestedJob";
 
 export interface AutomatedJob {
   title: string;
@@ -18,20 +19,25 @@ const AutomatedJobs = ({}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 9;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { currentWorkspace } = useWorkspace();
   console.log({ currentWorkspace });
 
   const fetchJobs = async () => {
-    const { data } = await client.get(
-      `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/`
-    );
-    setJobs(data);
+    try {
+      const { data } = await client.get(
+        `/v2/api/platforms/${currentWorkspace?.id}/shortcuts/`
+      );
+      setJobs(data);
+    } catch (error) {
+      console.error("Failed to fetch jobs:", error);
+    }
   };
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [currentWorkspace]);
 
   const filteredJobs = jobs.filter((job) => {
     const searchTerm = searchQuery.toLowerCase();
@@ -52,6 +58,17 @@ const AutomatedJobs = ({}) => {
   }, [searchQuery]);
 
   console.log({ jobs });
+
+  // Function to open the modal
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Function to close the modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col gap-4 mt-2">
       <Input
@@ -61,7 +78,7 @@ const AutomatedJobs = ({}) => {
         onChange={(e) => setSearchQuery(e.target.value)}
         className="max-w-xs"
       />
-      <div className=" flex   flex-wrap gap-4 w-full">
+      <div className=" flex  flex-wrap gap-4 w-full">
         {currentJobs?.map((job, index) => (
           <CustomCard
             job={{
@@ -87,6 +104,14 @@ const AutomatedJobs = ({}) => {
             onChange={setCurrentPage}
           />
         </div>
+      )}
+
+      {isModalOpen && (
+        <CreateJob
+          onOpenRuleModal={handleOpenModal}
+          onClose={handleCloseModal}
+          onSuccess={fetchJobs}
+        />
       )}
     </div>
   );

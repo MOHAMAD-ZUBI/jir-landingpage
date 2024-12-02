@@ -32,6 +32,8 @@ const OracleDashboard = (props: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const { environment, setEnvironment } = useEnvironment();
   const { currentWorkspace } = useWorkspace();
+
+  console.log({ currentWorkspace });
   const [modalType, setModalType] = React.useState<
     "job" | "checker" | "rule" | null
   >(null);
@@ -90,13 +92,15 @@ const OracleDashboard = (props: Props) => {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Switch
-                isSelected={environment === 0}
-                onValueChange={(isSelected) =>
-                  setEnvironment(isSelected ? 0 : 1)
-                }
+                isSelected={environment === 1}
+                onValueChange={(isSelected) => {
+                  if (currentWorkspace.url_2) {
+                    setEnvironment(isSelected ? 1 : 0);
+                  }
+                }}
               />
               <p className="text-sm max-md:text-xs text-gray-500">
-                Test Environment
+                Live Environment
               </p>
             </div>
           </div>
